@@ -1,16 +1,13 @@
 <script>
-  import { writable } from 'svelte/store';
+  import { tool } from './state.js';
   import Atlas from './editor/atlas.svelte';
-  import DefaultSource from './source.wgsl';
   import Rendering from './editor/rendering.svelte';
   import Scene from './editor/scene.svelte';
   import Toolbar from './editor/toolbar.svelte';
-  import Voxels from './voxels.svelte';
+  import Voxels from './viewport/voxels.svelte';
   
   let gpu = null;
   let isLoading = true;
-  let source = writable(DefaultSource);
-  let tool = writable('scene');
 
   Promise.all([
     (async () => {
@@ -46,16 +43,16 @@
 {:else}
   <div class="layout">
     <div class="editor">
-      <Toolbar tool={tool} />
+      <Toolbar />
       {#if $tool === 'scene'}
-        <Scene source={source} />
+        <Scene />
       {:else if $tool === 'atlas'}
         <Atlas />
       {:else if $tool === 'rendering'}
         <Rendering />
       {/if}
     </div>
-    <Voxels gpu={gpu} source={source} />
+    <Voxels gpu={gpu} />
   </div>
 {/if}
 

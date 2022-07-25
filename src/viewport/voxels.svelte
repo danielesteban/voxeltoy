@@ -1,10 +1,9 @@
 <script>
   export let gpu;
-  export let source;
-
   import { vec3 } from 'gl-matrix';
   import { Renderer, Volume } from 'gpuvoxels';
   import { onMount } from 'svelte';
+  import { scene } from '../state.js';
   import Input from './input.js';
 
   let wrapper;
@@ -54,9 +53,10 @@
     };
     requestAnimationFrame(animate);
 
-    const unsubscribe = source.subscribe(() => volume.setScene({ source: $source }));
+    const unsubscribe = scene.subscribe((scene) => volume.setScene({ source: scene }));
     return () => {
       unsubscribe();
+      input.destroy();
       volume.destroy();
     }
   });

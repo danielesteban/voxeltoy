@@ -1,21 +1,20 @@
 <script>
-  export let source;
-
   import { onMount } from 'svelte';
+  import { scene } from '../state.js';
 
   let wrapper;
   onMount(() => {
     let debounce;
     const editor = monaco.editor.create(wrapper, {
-      value: $source,
+      value: $scene,
       language: 'c',
-      theme: 'vs-dark',
       minimap: { enabled: false },
+      theme: 'vs-dark',
     });
     editor.onDidChangeModelContent(() => {
       if (debounce) clearTimeout(debounce);
       debounce = setTimeout(() => (
-        source.set(editor.getValue())
+        scene.set(editor.getValue())
       ), 300);
     });
     return () => {

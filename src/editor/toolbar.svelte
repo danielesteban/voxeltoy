@@ -1,5 +1,5 @@
 <script>
-  export let tool;
+  import { tool } from '../state.js';
   const setTool = (value) => () => {
     $tool = value;
   };
