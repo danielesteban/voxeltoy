@@ -3,8 +3,14 @@
   import { vec3 } from 'gl-matrix';
   import { Renderer, Volume } from 'gpuvoxels';
   import { onMount } from 'svelte';
-  import { atlas, scene } from '../state.js';
   import Input from './input.js';
+  import { atlas, rendering, scene } from '../state.js';
+
+  const hex2Rgb = (hex) => [
+    parseInt(hex.slice(1, 3), 16) / 255,
+    parseInt(hex.slice(3, 5), 16) / 255,
+    parseInt(hex.slice(5, 7), 16) / 255
+  ];
 
   let wrapper;
   onMount(() => {
@@ -52,13 +58,21 @@
     };
     requestAnimationFrame(animate);
 
-    const unsubscribe = {
-      atlas: atlas.subscribe((atlas) => renderer.atlas.compute(atlas)),
-      scene: scene.subscribe((scene) => volume.setScene({ source: scene })),
-    };
+    const subscriptions = [
+      atlas.subscribe((atlas) => renderer.atlas.compute(atlas)),
+      rendering.clearColor.subscribe((clearColor) => (
+        renderer.setClearColor(...hex2Rgb(clearColor))
+      )),
+      rendering.effects.edges.color.subscribe((color) => {
+        renderer.postprocessing.effects.edges.color = hex2Rgb(color);
+      }),
+      rendering.effects.edges.intensity.subscribe((intensity) => {
+        renderer.postprocessing.effects.edges.intensity = intensity;
+      }),
+      scene.subscribe((scene) => volume.setScene({ source: scene })),
+    ];
     return () => {
-      unsubscribe.atlas();
-      unsubscribe.scene();
+      subscriptions.forEach((unsubscribe) => unsubscribe());
       input.destroy();
       volume.destroy();
     }

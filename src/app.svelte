@@ -65,6 +65,10 @@
 </a>
 
 <style>
+  :global(:root) {
+    font-size: 16px;
+  }
+
   :global(body) {
     margin: 0;
     background: #000;
@@ -74,6 +78,7 @@
     overflow: hidden;
     font-family: monospace;
     font-size: 0.75rem;
+    line-height: 1.125rem;
   }
 
   :global(canvas) {
