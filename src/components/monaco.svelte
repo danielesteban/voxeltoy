@@ -17,11 +17,20 @@
         state.set(editor.getValue())
       ), 300);
     });
+    const resize = () => editor.layout();
+    window.addEventListener('resize', resize, false);
     return () => {
+      window.removeEventListener('resize', resize);
       clearTimeout(debounce);
       editor.dispose();
     };
   });
 </script>
 
-<div bind:this={wrapper} />
+<div class="wrapper" bind:this={wrapper} />
+
+<style>
+  .wrapper {
+    overflow: hidden;
+  }
+</style>

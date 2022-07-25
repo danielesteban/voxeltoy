@@ -1,12 +1,13 @@
 <script>
-  import { tool } from './state.js';
+  import { rendering, tool } from './state.js';
+  import Layout from './layout.svelte';
   import Atlas from './editor/atlas.svelte';
   import Rendering from './editor/rendering.svelte';
   import Scene from './editor/scene.svelte';
   import Toolbar from './editor/toolbar.svelte';
   import Voxels from './viewport/voxels.svelte';
   
-  let gpu = null;
+  let hasError = false;
   let isLoading = true;
 
   Promise.all([
@@ -23,11 +24,12 @@
       require(['vs/editor/editor.main'], resolve);
     }),
   ])
-    .then(([GPU]) => {
-      gpu = GPU;
+    .then(([gpu]) => {
+      rendering.gpu = gpu;
     })
     .catch((e) => {
       console.error(e);
+      hasError = true;
     })
     .finally(() => {
       isLoading = false;
@@ -36,13 +38,13 @@
 
 {#if isLoading}
   <div class="loading">Loading...</div>
-{:else if !gpu}
+{:else if hasError}
   <div class="canary">
     Sorry! This works only in <a href="https://www.google.com/chrome/canary/" rel="noopener noreferrer" target="_blank">Chrome Canary</a>.
   </div>
 {:else}
-  <div class="layout">
-    <div class="editor">
+  <Layout>
+    <svelte:fragment slot="editor">
       <Toolbar />
       {#if $tool === 'scene'}
         <Scene />
@@ -51,9 +53,9 @@
       {:else if $tool === 'rendering'}
         <Rendering />
       {/if}
-    </div>
-    <Voxels gpu={gpu} />
-  </div>
+    </svelte:fragment>
+    <Voxels slot="viewport" />
+  </Layout>
 {/if}
 
 <div class="info">
@@ -92,15 +94,8 @@
     transform: translate(-50%, -50%);
   }
 
-  .canary > a {
+  .canary > a, .info > a {
     color: inherit;
-  }
-
-  .editor {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
-    width: 800px;
   }
 
   .info {
@@ -109,18 +104,6 @@
     right: 1rem;
     text-align: right;
     opacity: 0.6;
-  }
-
-  .info > a {
-    color: inherit;
-  }
-
-  .layout {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    grid-template-rows: 1fr;
-    width: 100vw;
-    height: 100vh;
   }
 
   .ribbon {

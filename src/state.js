@@ -10,7 +10,8 @@ export const rendering = {
       color: writable('#000000'),
       intensity: writable(0.3),
     },
-  }
+  },
+  gpu: null,
 };
 export const scene = writable(DefaultScene);
 export const tool = writable('scene');

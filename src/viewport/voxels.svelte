@@ -1,5 +1,4 @@
 <script>
-  export let gpu;
   import { vec3 } from 'gl-matrix';
   import { Renderer, Volume } from 'gpuvoxels';
   import { onMount } from 'svelte';
@@ -15,7 +14,7 @@
   let wrapper;
   onMount(() => {
     const input = new Input(wrapper);
-    const renderer = new Renderer(gpu);
+    const renderer = new Renderer(rendering.gpu);
     wrapper.appendChild(renderer.canvas);
     renderer.setClearColor(0.1, 0.1, 0.1);
     // Still dunno why.. but it throws an error if I don't do this.
