@@ -1,9 +1,6 @@
-<div class="wip">
-  Atlas shader editor coming in the next version!
-</div>
+<script>
+  import Monaco from '../components/monaco.svelte';
+  import { atlas } from '../state.js';
+</script>
 
-<style>
-  .wip {
-    padding: 1rem;
-  }
-</style>
+<Monaco state={atlas} />

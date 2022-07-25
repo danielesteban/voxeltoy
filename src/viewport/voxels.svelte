@@ -3,7 +3,7 @@
   import { vec3 } from 'gl-matrix';
   import { Renderer, Volume } from 'gpuvoxels';
   import { onMount } from 'svelte';
-  import { scene } from '../state.js';
+  import { atlas, scene } from '../state.js';
   import Input from './input.js';
 
   let wrapper;
@@ -15,7 +15,6 @@
     // Still dunno why.. but it throws an error if I don't do this.
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setSize(input.bounds.width, input.bounds.height);
-    renderer.atlas.compute();
     window.addEventListener('resize', () => {
       input.updateBounds();
       renderer.setSize(input.bounds.width, input.bounds.height);
@@ -53,9 +52,13 @@
     };
     requestAnimationFrame(animate);
 
-    const unsubscribe = scene.subscribe((scene) => volume.setScene({ source: scene }));
+    const unsubscribe = {
+      atlas: atlas.subscribe((atlas) => renderer.atlas.compute(atlas)),
+      scene: scene.subscribe((scene) => volume.setScene({ source: scene })),
+    };
     return () => {
-      unsubscribe();
+      unsubscribe.atlas();
+      unsubscribe.scene();
       input.destroy();
       volume.destroy();
     }
