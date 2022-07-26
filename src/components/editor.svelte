@@ -13,7 +13,6 @@
   };
   onMount(() => {
     let debounce;
-    let isMounting = true;
     let isFromEditor = false;
     editor = monaco.editor.create(wrapper, {
       value: $source,
@@ -32,19 +31,18 @@
     window.addEventListener('resize', resizeEditor, false);
     const subscriptions = [
       errors.subscribe((errors) => {
-        if (isMounting || !errors.length) {
+        if (!errors.length) {
           return;
         }
         showErrors = true;
         tick().then(resizeEditor);
       }),
       source.subscribe((value) => {
-        if (!isMounting && !isFromEditor) {
+        if (!isFromEditor) {
           editor.setValue(value);
         }
       }),
     ];
-    isMounting = false;
     return () => {
       clearTimeout(debounce);
       editor.dispose();
