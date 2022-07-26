@@ -7,13 +7,17 @@
   import Toolbar from './ui/toolbar.svelte';
   import Voxels from './viewport/voxels.svelte';
 
+  let uiWidth = 800;
   const drag = {
     enabled: false,
     initial: 0,
     offset: 0,
   };
-  let uiWidth = 800;
-
+  const mousedown = ({ clientX }) => {
+    drag.enabled = true;
+    drag.initial = uiWidth;
+    drag.offset = clientX;
+  };
   const mousemove = ({ clientX }) => {
     if (drag.enabled) {
       uiWidth = Math.max(Math.floor(drag.initial + clientX - drag.offset), 400);
@@ -24,12 +28,6 @@
     if (drag.enabled) {
       drag.enabled = false;
     }
-  };
-  const mousedown = (e) => {
-    drag.enabled = true;
-    drag.initial = uiWidth;
-    drag.offset = e.clientX;
-    mousemove(e);
   };
 </script>
 
