@@ -65,15 +65,14 @@
     const processShaderErrors = ({ code, shader }, state) => {
       hasError = false;
       shader.compilationInfo().then(({ messages }) => (
-        messages.forEach(({ length, lineNum, linePos, message, type }) => {
+        state.set(messages.map(({ length, lineNum, linePos, message, type }) => {
           hasError = true;
           const line = code.split('\n')[lineNum - 1];
           const pointer = Array.from({ length: linePos - 1 + length }, (v, i) => (
             i >= (linePos - 1) ? '^' : ' '
           )).join('');
-          const error = [`:${lineNum}:${linePos} ${type}: ${message}`, `${line}`, `${pointer}`];
-          state.update((errors) => [...errors, error]);
-        })
+          return [`:${lineNum}:${linePos} ${type}: ${message}`, `${line}`, `${pointer}`];
+        }))
       ));
     };
 

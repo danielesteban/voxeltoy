@@ -5,12 +5,11 @@
 
   let wrapper;
   let editor;
-  let messages;
   let showErrors = false;
-  const resize = () => editor.layout();
+  const resizeEditor = () => editor.layout();
   const toggleErrors = () => {
     showErrors = !showErrors;
-    tick().then(resize);
+    tick().then(resizeEditor);
   };
   onMount(() => {
     let debounce;
@@ -30,17 +29,14 @@
         isFromEditor = false;
       }, 300);
     });
-    window.addEventListener('resize', resize, false);
+    window.addEventListener('resize', resizeEditor, false);
     const subscriptions = [
       errors.subscribe((errors) => {
         if (isMounting || !errors.length) {
           return;
         }
         showErrors = true;
-        tick().then(() => {
-          messages.scrollTop = messages.scrollHeight;
-          resize();
-        });
+        tick().then(resizeEditor);
       }),
       source.subscribe((value) => {
         if (!isMounting && !isFromEditor) {
@@ -52,7 +48,7 @@
     return () => {
       clearTimeout(debounce);
       editor.dispose();
-      window.removeEventListener('resize', resize);
+      window.removeEventListener('resize', resizeEditor);
       subscriptions.forEach((unsubscribe) => unsubscribe());
     };
   });
@@ -61,8 +57,11 @@
 <div class="editor">
   <div class="wrapper" bind:this={wrapper} />
   <div class="errors" class:open={showErrors}>
-    <div class="toggle" on:click={toggleErrors}>Errors</div>
-    <div class="messages" bind:this={messages}>
+    <div class="toggle" on:click={toggleErrors}>
+      <div class="status" class:error={$errors.length} />
+      {$errors.length} errors
+    </div>
+    <div class="messages">
       {#each $errors as messages}
         <div>
           {#each messages as message}
@@ -98,8 +97,22 @@
   }
 
   .toggle {
+    display: flex;
+    align-items: center;
     padding: 0.5rem 1rem;
     cursor: pointer;
+    gap: 0.5rem;
+  }
+
+  .status {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 0.5rem;
+    background-color: #393;
+  }
+
+  .status.error {
+    background-color: #933;
   }
 
   .messages {
