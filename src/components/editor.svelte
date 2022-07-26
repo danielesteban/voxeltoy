@@ -109,5 +109,6 @@
 
   .messages > div {
     padding: 0.5rem 1rem;
+    white-space: pre;
   }
 </style>

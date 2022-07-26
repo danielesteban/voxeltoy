@@ -68,8 +68,8 @@
         messages.forEach(({ length, lineNum, linePos, message, type }) => {
           hasError = true;
           const line = code.split('\n')[lineNum - 1];
-          const pointer = Array.from({ length: linePos + length }, (v, i) => (
-            i >= linePos ? '^' : ' '
+          const pointer = Array.from({ length: linePos - 1 + length }, (v, i) => (
+            i >= (linePos - 1) ? '^' : ' '
           )).join('');
           const error = [`:${lineNum}:${linePos} ${type}: ${message}`, `${line}`, `${pointer}`];
           state.update((errors) => [...errors, error]);
