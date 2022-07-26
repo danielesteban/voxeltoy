@@ -64,20 +64,23 @@
 
     const processShaderErrors = ({ code, shader }, state) => {
       hasError = false;
+      const lines = code.split('\n');
+      const lineOffset = lines.indexOf('// __SOURCE__') + 1;
       shader.compilationInfo().then(({ messages }) => (
         state.set(messages.map(({ length, lineNum, linePos, message, type }) => {
           hasError = true;
-          const line = code.split('\n')[lineNum - 1];
+          const line = lines[lineNum - 1];
           const pointer = Array.from({ length: linePos - 1 + length }, (v, i) => (
             i >= (linePos - 1) ? '^' : ' '
           )).join('');
-          return [`:${lineNum}:${linePos} ${type}: ${message}`, `${line}`, `${pointer}`];
+          return [`:${lineNum - lineOffset}:${linePos} ${type}: ${message}`, `${line}`, `${pointer}`];
         }))
       ));
     };
 
     const subscriptions = [
       atlas.source.subscribe((source) => {
+        source = '// __SOURCE__\n' + source;
         renderer.atlas.compute(source);
         processShaderErrors(renderer.atlas, atlas.errors);
       }),
@@ -91,6 +94,7 @@
         renderer.postprocessing.effects.edges.intensity = intensity;
       }),
       scene.source.subscribe((source) => {
+        source = '// __SOURCE__\n' + source;
         volume.setScene({ source });
         processShaderErrors(volume.voxelizer, scene.errors);
       }),
