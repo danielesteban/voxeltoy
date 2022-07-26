@@ -1,5 +1,11 @@
 <script>
   import { tick } from 'svelte';
+  import { tool } from './state.js';
+  import Atlas from './ui/atlas.svelte';
+  import Rendering from './ui/rendering.svelte';
+  import Scene from './ui/scene.svelte';
+  import Toolbar from './ui/toolbar.svelte';
+  import Voxels from './viewport/voxels.svelte';
 
   const drag = {
     enabled: false,
@@ -31,10 +37,17 @@
 
 <div class="layout" style="--uiWidth: {uiWidth}px">
   <div class="ui">
-    <slot name="ui" />
+    <Toolbar />
+    {#if $tool === 'scene'}
+      <Scene />
+    {:else if $tool === 'atlas'}
+      <Atlas />
+    {:else if $tool === 'rendering'}
+      <Rendering />
+    {/if}
   </div>
   <div class="divider" on:mousedown={mousedown} />
-  <slot name="viewport" />
+  <Voxels slot="viewport" />
 </div>
 
 <style>

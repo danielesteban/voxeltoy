@@ -1,5 +1,6 @@
 <script>
   import { rendering } from '../state.js';
+
   const { background, effects: { edges: { color, intensity } }, resolution } = rendering;
   const resolutions = [100, 200, 300, 400];
   const setResolution = (value) => () => {

@@ -1,6 +1,6 @@
 <script>
-  import Dropdown from '../components/dropdown.svelte';
   import { examples, scene, tool } from '../state.js';
+  import Dropdown from './dropdown.svelte';
 
   const tools = [
     { id: 'scene', name: 'Scene' },

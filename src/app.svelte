@@ -1,11 +1,6 @@
 <script>
-  import { rendering, tool } from './state.js';
+  import { rendering } from './state.js';
   import Layout from './layout.svelte';
-  import Atlas from './ui/atlas.svelte';
-  import Rendering from './ui/rendering.svelte';
-  import Scene from './ui/scene.svelte';
-  import Toolbar from './ui/toolbar.svelte';
-  import Voxels from './viewport/voxels.svelte';
   
   let hasError = false;
   let isLoading = true;
@@ -43,19 +38,7 @@
     Sorry! This works only in <a href="https://www.google.com/chrome/canary/" rel="noopener noreferrer" target="_blank">Chrome Canary</a>.
   </div>
 {:else}
-  <Layout>
-    <svelte:fragment slot="ui">
-      <Toolbar />
-      {#if $tool === 'scene'}
-        <Scene />
-      {:else if $tool === 'atlas'}
-        <Atlas />
-      {:else if $tool === 'rendering'}
-        <Rendering />
-      {/if}
-    </svelte:fragment>
-    <Voxels slot="viewport" />
-  </Layout>
+  <Layout />
 {/if}
 
 <div class="info">

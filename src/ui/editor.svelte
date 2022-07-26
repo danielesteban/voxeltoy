@@ -1,6 +1,7 @@
 <script>
-  export let state;
   import { tick, onMount } from 'svelte';
+
+  export let state;
   const { errors, source } = state;
 
   let wrapper;
