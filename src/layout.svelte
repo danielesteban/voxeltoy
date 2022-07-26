@@ -6,11 +6,11 @@
     initial: 0,
     offset: 0,
   };
-  let editorWidth = 800;
+  let uiWidth = 800;
 
   const mousemove = ({ clientX }) => {
     if (drag.enabled) {
-      editorWidth = Math.max(Math.floor(drag.initial + clientX - drag.offset), 400);
+      uiWidth = Math.max(Math.floor(drag.initial + clientX - drag.offset), 400);
       tick().then(() => window.dispatchEvent(new Event('resize')));
     }
   };
@@ -21,7 +21,7 @@
   };
   const mousedown = (e) => {
     drag.enabled = true;
-    drag.initial = editorWidth;
+    drag.initial = uiWidth;
     drag.offset = e.clientX;
     mousemove(e);
   };
@@ -29,9 +29,9 @@
 
 <svelte:window on:mousemove={mousemove} on:mouseup={mouseup} />
 
-<div class="layout" style="--editorWidth: {editorWidth}px">
-  <div class="editor">
-    <slot name="editor" />
+<div class="layout" style="--uiWidth: {uiWidth}px">
+  <div class="ui">
+    <slot name="ui" />
   </div>
   <div class="divider" on:mousedown={mousedown} />
   <slot name="viewport" />
@@ -46,11 +46,12 @@
     height: 100vh;
   }
 
-  .editor {
+  .ui {
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr;
-    width: var(--editorWidth);
+    width: var(--uiWidth);
+    min-height: 0;
   }
 
   .divider {

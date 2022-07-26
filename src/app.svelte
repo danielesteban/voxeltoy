@@ -1,10 +1,10 @@
 <script>
   import { rendering, tool } from './state.js';
   import Layout from './layout.svelte';
-  import Atlas from './editor/atlas.svelte';
-  import Rendering from './editor/rendering.svelte';
-  import Scene from './editor/scene.svelte';
-  import Toolbar from './editor/toolbar.svelte';
+  import Atlas from './ui/atlas.svelte';
+  import Rendering from './ui/rendering.svelte';
+  import Scene from './ui/scene.svelte';
+  import Toolbar from './ui/toolbar.svelte';
   import Voxels from './viewport/voxels.svelte';
   
   let hasError = false;
@@ -44,7 +44,7 @@
   </div>
 {:else}
   <Layout>
-    <svelte:fragment slot="editor">
+    <svelte:fragment slot="ui">
       <Toolbar />
       {#if $tool === 'scene'}
         <Scene />

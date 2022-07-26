@@ -38,6 +38,7 @@
     );
 
     let clock = performance.now() / 1000;
+    let hasError = false;
     const animate = () => {
       requestAnimationFrame(animate);
       const time = performance.now() / 1000;
@@ -50,6 +51,10 @@
         volume.width * input.zoom.state
       );
 
+      if (hasError) {
+        return;
+      }
+
       const command = renderer.device.createCommandEncoder();
       volume.compute(command, time);
       renderer.render(command, volume);
@@ -57,8 +62,26 @@
     };
     requestAnimationFrame(animate);
 
+    const processShaderErrors = ({ code, shader }, state) => {
+      hasError = false;
+      shader.compilationInfo().then(({ messages }) => (
+        messages.forEach(({ length, lineNum, linePos, message, type }) => {
+          hasError = true;
+          const line = code.split('\n')[lineNum - 1];
+          const pointer = Array.from({ length: linePos + length }, (v, i) => (
+            i >= linePos ? '^' : ' '
+          )).join('');
+          const error = [`:${lineNum}:${linePos} ${type}: ${message}`, `${line}`, `${pointer}`];
+          state.update((errors) => [...errors, error]);
+        })
+      ));
+    };
+
     const subscriptions = [
-      atlas.subscribe((atlas) => renderer.atlas.compute(atlas)),
+      atlas.source.subscribe((source) => {
+        renderer.atlas.compute(source);
+        processShaderErrors(renderer.atlas, atlas.errors);
+      }),
       rendering.clearColor.subscribe((clearColor) => (
         renderer.setClearColor(...hex2Rgb(clearColor))
       )),
@@ -68,7 +91,10 @@
       rendering.effects.edges.intensity.subscribe((intensity) => {
         renderer.postprocessing.effects.edges.intensity = intensity;
       }),
-      scene.subscribe((scene) => volume.setScene({ source: scene })),
+      scene.source.subscribe((source) => {
+        volume.setScene({ source });
+        processShaderErrors(volume.voxelizer, scene.errors);
+      }),
     ];
     return () => {
       subscriptions.forEach((unsubscribe) => unsubscribe());

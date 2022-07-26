@@ -10,9 +10,9 @@
   const setTool = (value) => () => {
     $tool = value;
   };
-  const loadExample = (example) => () => {
-    $scene = example;
-  };
+  const loadExample = (example) => () => (
+    scene.source.set(example)
+  );
 </script>
 
 <div class="toolbar">
