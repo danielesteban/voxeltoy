@@ -16,7 +16,9 @@
     <label for="resolution">Resolution:</label>
     <div class="resolution">
       {#each resolutions as size}
-        <div class:enabled={size === $resolution} on:click={setResolution(size)}>{size}<span>3</span></div>
+        <div class:enabled={size === $resolution} on:click={setResolution(size)}>
+          {size}<span>3</span>
+        </div>
       {/each}
     </div>
   </div>
