@@ -45,7 +45,7 @@
     {/if}
   </div>
   <div class="divider" on:mousedown={mousedown} />
-  <Voxels slot="viewport" />
+  <Voxels />
 </div>
 
 <style>
