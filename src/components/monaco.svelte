@@ -5,6 +5,7 @@
   let wrapper;
   onMount(() => {
     let debounce;
+    let fromEditor = true;
     const editor = monaco.editor.create(wrapper, {
       value: $state,
       language: 'c',
@@ -13,16 +14,25 @@
     });
     editor.onDidChangeModelContent(() => {
       if (debounce) clearTimeout(debounce);
-      debounce = setTimeout(() => (
-        state.set(editor.getValue())
-      ), 300);
+      debounce = setTimeout(() => {
+        fromEditor = true;
+        state.set(editor.getValue());
+        fromEditor = false;
+      }, 300);
     });
     const resize = () => editor.layout();
     window.addEventListener('resize', resize, false);
+    const unsubscribe = state.subscribe((value) => {
+      if (!fromEditor) {
+        editor.setValue(value);
+      }
+    });
+    fromEditor = false;
     return () => {
-      window.removeEventListener('resize', resize);
       clearTimeout(debounce);
       editor.dispose();
+      window.removeEventListener('resize', resize);
+      unsubscribe();
     };
   });
 </script>
