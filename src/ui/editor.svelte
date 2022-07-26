@@ -1,3 +1,7 @@
+<script context="module">
+  const Storage = new Map();
+</script>
+
 <script>
   import { tick, onMount } from 'svelte';
 
@@ -14,22 +18,18 @@
   };
   onMount(() => {
     let debounce;
-    let isFromEditor = false;
+    let isFromEditor = true;
     editor = monaco.editor.create(wrapper, {
-      value: $source,
-      language: 'c',
       minimap: { enabled: false },
       theme: 'vs-dark',
     });
-    editor.onDidChangeModelContent(() => {
-      if (debounce) clearTimeout(debounce);
-      debounce = setTimeout(() => {
-        isFromEditor = true;
-        source.set(editor.getValue());
-        isFromEditor = false;
-      }, 300);
-    });
-    window.addEventListener('resize', resizeEditor, false);
+    if (Storage.has(source)) {
+      const { model, view } = Storage.get(source);
+      editor.setModel(model);
+      editor.restoreViewState(view);
+    } else {
+      editor.setModel(monaco.editor.createModel($source, 'c'));
+    }
     const subscriptions = [
       errors.subscribe((errors) => {
         if (!errors.length) {
@@ -44,9 +44,23 @@
         }
       }),
     ];
+    isFromEditor = false;
+    editor.onDidChangeModelContent(() => {
+      if (debounce) clearTimeout(debounce);
+      debounce = setTimeout(() => {
+        isFromEditor = true;
+        source.set(editor.getValue());
+        isFromEditor = false;
+      }, 300);
+    });
+    window.addEventListener('resize', resizeEditor, false);
     return () => {
-      clearTimeout(debounce);
+      Storage.set(source, {
+        model: editor.getModel(),
+        view: editor.saveViewState(),
+      });
       editor.dispose();
+      clearTimeout(debounce);
       window.removeEventListener('resize', resizeEditor);
       subscriptions.forEach((unsubscribe) => unsubscribe());
     };
