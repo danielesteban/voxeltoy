@@ -65,7 +65,7 @@
     content: "";
     background: #393;
     cursor: default;
-    border-radius: 4px;
+    border-radius: 0.25rem;
   }
 
   .actions {
