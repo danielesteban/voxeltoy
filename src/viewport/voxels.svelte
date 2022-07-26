@@ -2,8 +2,8 @@
   import { vec3 } from 'gl-matrix';
   import { Renderer, Volume } from 'gpuvoxels';
   import { onMount } from 'svelte';
-  import Input from './input.js';
   import { atlas, rendering, scene } from '../state.js';
+  import Input from './input.js';
 
   const hex2Rgb = (hex) => [
     parseInt(hex.slice(1, 3), 16) / 255,
@@ -11,11 +11,11 @@
     parseInt(hex.slice(5, 7), 16) / 255
   ];
 
-  let wrapper;
+  let viewport;
   onMount(() => {
-    const input = new Input(wrapper);
+    const input = new Input(viewport);
     const renderer = new Renderer(rendering.gpu);
-    wrapper.appendChild(renderer.canvas);
+    viewport.appendChild(renderer.canvas);
     // Still dunno why.. but it throws an error if I don't do this.
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setSize(input.bounds.width, input.bounds.height);
@@ -117,10 +117,10 @@
   });
 </script>
 
-<div class="wrapper" bind:this={wrapper} />
+<div class="viewport" bind:this={viewport} />
 
 <style>
-  .wrapper {
+  .viewport {
     overflow: hidden;
   }
 </style>

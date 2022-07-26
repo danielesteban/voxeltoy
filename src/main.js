@@ -1,5 +1,5 @@
-import App from './app.svelte';
+import Main from './main.svelte';
 
-new App({
+new Main({
   target: document.body,
 });
