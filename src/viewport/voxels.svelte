@@ -16,7 +16,6 @@
     const input = new Input(wrapper);
     const renderer = new Renderer(rendering.gpu);
     wrapper.appendChild(renderer.canvas);
-    renderer.setClearColor(0.1, 0.1, 0.1);
     // Still dunno why.. but it throws an error if I don't do this.
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setSize(input.bounds.width, input.bounds.height);
@@ -25,20 +24,9 @@
       renderer.setSize(input.bounds.width, input.bounds.height);
     }, false);
 
-    const volume = new Volume({
-      device: renderer.device,
-      width: 300,
-      height: 300,
-      depth: 300,
-    });
-
-    vec3.set(
-      renderer.camera.target,
-      volume.width * 0.5, volume.height * 0.5, volume.depth * 0.5
-    );
-
     let clock = performance.now() / 1000;
-    let hasError = false;
+    let hasError = false;  
+    let volume;
     const animate = () => {
       requestAnimationFrame(animate);
       const time = performance.now() / 1000;
@@ -84,8 +72,8 @@
         renderer.atlas.compute(source);
         processShaderErrors(renderer.atlas, atlas.errors);
       }),
-      rendering.clearColor.subscribe((clearColor) => (
-        renderer.setClearColor(...hex2Rgb(clearColor))
+      rendering.background.subscribe((background) => (
+        renderer.setClearColor(...hex2Rgb(background))
       )),
       rendering.effects.edges.color.subscribe((color) => {
         renderer.postprocessing.effects.edges.color = hex2Rgb(color);
@@ -93,7 +81,29 @@
       rendering.effects.edges.intensity.subscribe((intensity) => {
         renderer.postprocessing.effects.edges.intensity = intensity;
       }),
+      rendering.resolution.subscribe((resolution) => {
+        let source;
+        if (volume) {
+          source = volume.source;
+          volume.destroy();
+        }
+        volume = new Volume({
+          device: renderer.device,
+          width: resolution,
+          height: resolution,
+          depth: resolution,
+        });
+        if (source) {
+          volume.source = source;
+          volume.setScene({ source });
+        }
+        vec3.set(
+          renderer.camera.target,
+          volume.width * 0.5, volume.height * 0.5, volume.depth * 0.5
+        );
+      }),
       scene.source.subscribe((source) => {
+        volume.source = source;
         source = '// __SOURCE__\n' + source;
         volume.setScene({ source });
         processShaderErrors(volume.voxelizer, scene.errors);

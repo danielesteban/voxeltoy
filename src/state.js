@@ -11,7 +11,7 @@ export const atlas = {
 };
 export const examples = [Example1, Example2, Example3, Example4];
 export const rendering = {
-  clearColor: writable('#000000'),
+  background: writable('#000000'),
   effects: {
     edges: {
       color: writable('#000000'),
@@ -19,6 +19,7 @@ export const rendering = {
     },
   },
   gpu: null,
+  resolution: writable(300),
 };
 export const scene = {
   errors: writable([]),

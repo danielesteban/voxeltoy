@@ -34,7 +34,7 @@ fn distanceToScene(pos : vec3<f32>) -> f32 {
   return opSmoothUnion(
     sdSphere(origin - vec3<f32>(size * (0.6 * t * -1), size * 0.2 * t * -1, 0), size),
     sdSphere(origin - vec3<f32>(size * (0.6 * t), size * 0.2 * t, 0), size),
-    100
+    10
   );
 }
 
