@@ -33,8 +33,8 @@
 
 <svelte:window on:mousemove={mousemove} on:mouseup={mouseup} />
 
-<div class="layout" style="--uiWidth: {uiWidth}px">
-  <div class="ui">
+<div class="layout">
+  <div class="ui" style="width: {uiWidth}px">
     <Toolbar />
     {#if $tool === 'scene'}
       <Scene />
@@ -61,7 +61,6 @@
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr;
-    width: var(--uiWidth);
     min-height: 0;
   }
 
