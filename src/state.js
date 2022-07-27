@@ -32,8 +32,8 @@ export const deserialize = (data) => {
     data = JSON.parse(data);
   }
   atlas.source.set(data.atlas);
-  rendering.background.set(('000000' + data.background.toString(16)).slice(-6));
-  rendering.effects.edges.color.set(('000000' + data.edgesColor.toString(16)).slice(-6));
+  rendering.background.set(`#${('000000' + data.background.toString(16)).slice(-6)}`);
+  rendering.effects.edges.color.set(`#${('000000' + data.edgesColor.toString(16)).slice(-6)}`);
   rendering.effects.edges.intensity.set(data.edgesIntensity);
   rendering.resolution.set(data.resolution);
   scene.source.set(data.scene);
