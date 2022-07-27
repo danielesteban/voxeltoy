@@ -1,5 +1,5 @@
 <script>
-  import { rendering } from './state.js';
+  import { rendering } from './state/app.js';
   import App from './app.svelte';
   
   let hasError = false;

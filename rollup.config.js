@@ -4,6 +4,7 @@ import copy from 'rollup-plugin-copy';
 import html from '@rollup/plugin-html';
 import livereload from 'rollup-plugin-livereload';
 import postcss from 'rollup-plugin-postcss';
+import replace from '@rollup/plugin-replace';
 import resolve from '@rollup/plugin-node-resolve';
 import serve from 'rollup-plugin-serve';
 import svelte from 'rollup-plugin-svelte';
@@ -11,6 +12,7 @@ import { terser } from 'rollup-plugin-terser';
 
 const outputPath = path.resolve(__dirname, 'dist');
 const production = !process.env.ROLLUP_WATCH;
+const server = production ? 'https://voxeltoy-server.gatunes.com/' : 'http://localhost:8081/';
 const token = production ? (
   'AjvbB3Z6EZse+QrdlEIEtxDjjfJirkH1YL4yS+dZiaTGFx0TlVdb1mhzgR7fQeFuKrOwEKCoPb6GjNbSdStxpwQAAABUeyJvcmlnaW4iOiJodHRwczovL3ZveGVsdG95LmdhdHVuZXMuY29tOjQ0MyIsImZlYXR1cmUiOiJXZWJHUFUiLCJleHBpcnkiOjE2NzUyMDk1OTl9'
 ) : (
@@ -36,6 +38,10 @@ export default {
     postcss({
       extract: 'main.css',
       minimize: production,
+    }),
+    replace({
+      preventAssignment: false,
+      __SERVER__: JSON.stringify(server),
     }),
     resolve({
       browser: true,

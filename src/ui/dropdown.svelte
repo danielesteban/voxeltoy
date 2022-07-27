@@ -13,13 +13,13 @@
   .options {
     display: none;
     position: absolute;
+    left: 0;
     top: 100%;
+    z-index: 1;
   }
 
   .dropdown:hover .options {
     display: block;
     background-color: #111;
-    z-index: 1;
-    width: 100%;
   }
 </style>

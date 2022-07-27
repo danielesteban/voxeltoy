@@ -1,5 +1,5 @@
 <script>
-  import { rendering } from '../state.js';
+  import { rendering } from '../state/app.js';
 
   const { background, effects: { edges: { color, intensity } }, resolution } = rendering;
   const resolutions = [100, 200, 300, 400];
@@ -78,6 +78,7 @@
     border: 1px solid #000;
     outline: 0;
     border-radius: 0.25rem;
+    font-family: inherit;
   }
 
   .input > input[type="number"] {

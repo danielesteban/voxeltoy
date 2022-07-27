@@ -2,7 +2,7 @@
   import { vec3 } from 'gl-matrix';
   import { Renderer, Volume } from 'gpuvoxels';
   import { onMount } from 'svelte';
-  import { atlas, rendering, scene } from '../state.js';
+  import { atlas, rendering, scene } from '../state/app.js';
   import Input from './input.js';
 
   const hex2Rgb = (hex) => [
@@ -115,10 +115,30 @@
         processShaderErrors(volume.voxelizer, scene.errors);
       }),
     ];
+    rendering.screenshot = (resolution = 512) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = resolution;
+      canvas.height = resolution;
+      let x = 0;
+      let y = 0;
+      let w = renderer.canvas.width;
+      let h = renderer.canvas.height;
+      if (w > h) {
+        x = (h - w) * -0.5;
+        w = h;
+      } else {
+        y = (w - h) * -0.5;
+        h = w;
+      }
+      ctx.drawImage(renderer.canvas, x, y, h, w, 0, 0, resolution, resolution);
+      return canvas.toDataURL();
+    };
     return () => {
       subscriptions.forEach((unsubscribe) => unsubscribe());
       input.destroy();
       volume.destroy();
+      delete rendering.screenshot;
     }
   });
 </script>

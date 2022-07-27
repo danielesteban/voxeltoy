@@ -1,5 +1,5 @@
 <script>
-  import { atlas } from '../state.js';
+  import { atlas } from '../state/app.js';
   import Editor from './editor.svelte';
 </script>
 

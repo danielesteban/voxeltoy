@@ -1,7 +1,9 @@
 <script>
   import { tick } from 'svelte';
-  import { tool } from './state.js';
+  import { view } from './state/app.js';
   import Atlas from './ui/atlas.svelte';
+  import Gallery from './ui/gallery.svelte';
+  import Publish from './ui/publish.svelte';
   import Rendering from './ui/rendering.svelte';
   import Scene from './ui/scene.svelte';
   import Toolbar from './ui/toolbar.svelte';
@@ -36,12 +38,16 @@
 <div class="app">
   <div class="ui" style="width: {uiWidth}px">
     <Toolbar />
-    {#if $tool === 'scene'}
-      <Scene />
-    {:else if $tool === 'atlas'}
+    {#if $view === 'atlas'}
       <Atlas />
-    {:else if $tool === 'rendering'}
+    {:else if $view === 'gallery'}
+      <Gallery />
+    {:else if $view === 'publish'}
+      <Publish />
+    {:else if $view === 'rendering'}
       <Rendering />
+    {:else if $view === 'scene'}
+      <Scene />
     {/if}
   </div>
   <div class="divider" on:mousedown={mousedown} />

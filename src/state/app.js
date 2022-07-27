@@ -1,9 +1,11 @@
 import { get, writable } from 'svelte/store';
-import DefaultAtlas from './shaders/atlas.wgsl';
-import Example1 from './shaders/example1.wgsl';
-import Example2 from './shaders/example2.wgsl';
-import Example3 from './shaders/example3.wgsl';
-import Example4 from './shaders/example4.wgsl';
+import DefaultAtlas from '../shaders/atlas.wgsl';
+import Example1 from '../shaders/example1.wgsl';
+import Example2 from '../shaders/example2.wgsl';
+import Example3 from '../shaders/example3.wgsl';
+import Example4 from '../shaders/example4.wgsl';
+
+export const view = writable('scene');
 
 export const atlas = {
   errors: writable([]),
@@ -25,12 +27,8 @@ export const scene = {
   errors: writable([]),
   source: writable(examples[0]),
 };
-export const tool = writable('scene');
 
 export const deserialize = (data) => {
-  if (typeof data === 'string') {
-    data = JSON.parse(data);
-  }
   delete atlas.editor;
   atlas.source.set(data.atlas);
   rendering.background.set(`#${('000000' + data.background.toString(16)).slice(-6)}`);
@@ -41,12 +39,11 @@ export const deserialize = (data) => {
   scene.source.set(data.scene);
 };
 
-export const serialize = () => JSON.stringify({
+export const serialize = () => ({
   atlas: get(atlas.source),
   background: parseInt(get(rendering.background).slice(1), 16),
   edgesColor: parseInt(get(rendering.effects.edges.color).slice(1), 16),
   edgesIntensity: get(rendering.effects.edges.intensity),
   resolution: get(rendering.resolution),
   scene: get(scene.source),
-  version: 1,
 });
