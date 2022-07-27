@@ -20,7 +20,7 @@
   };
   const mousemove = ({ clientX }) => {
     if (drag.enabled) {
-      uiWidth = Math.max(Math.floor(drag.initial + clientX - drag.offset), 400);
+      uiWidth = Math.max(Math.floor(drag.initial + clientX - drag.offset), 500);
       tick().then(() => window.dispatchEvent(new Event('resize')));
     }
   };
