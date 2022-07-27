@@ -120,7 +120,7 @@
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    padding: 0.5rem 1.5rem;
+    padding: 0.5rem 1rem;
     cursor: pointer;
     gap: 0.5rem;
     background-color: #111;
