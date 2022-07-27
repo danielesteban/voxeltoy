@@ -45,17 +45,26 @@ export const session = (() => {
       stored = false;
     }
   }
-  const { subscribe, set } = writable(stored);
+  const { subscribe, set: setValue } = writable(stored);
+  const set = (value) => {
+    setValue(value);
+    if (value) {
+      localStorage.setItem(key, JSON.stringify(value));
+    } else {
+      localStorage.removeItem(key);
+    }
+  };
+  if (stored) {
+    request({
+      endpoint: 'user',
+      session: stored.session,
+    })
+      .then(set)
+      .catch(() => set(false))
+  }
   return {
     subscribe,
-    set: (value) => {
-      set(value);
-      if (value) {
-        localStorage.setItem(key, JSON.stringify(value));
-      } else {
-        localStorage.removeItem(key);
-      }
-    },
+    set,
   };
 })();
 

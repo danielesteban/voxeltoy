@@ -37,15 +37,22 @@ export default (api) => {
     scene.update
   );
 
-  api.post(
-    '/user',
-    preventCache,
-    user.register
-  );
-
   api.put(
     '/user',
     preventCache,
     user.login
+  );
+
+  api.get(
+    '/user',
+    preventCache,
+    requireAuth,
+    user.refreshSession
+  );
+
+  api.post(
+    '/user',
+    preventCache,
+    user.register
   );
 };

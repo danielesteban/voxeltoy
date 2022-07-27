@@ -23,6 +23,10 @@ export const login = [
   },
 ];
 
+export const refreshSession = (req, res) => {
+  res.json(req.user.getSession());
+};
+
 export const register = [
   body('email')
     .isEmail()
