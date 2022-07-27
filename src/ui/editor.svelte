@@ -84,9 +84,9 @@
     <div class="messages">
       {#each $errors as { lineNum, linePos, type, message, line, pointer }}
         <div>
-          :{lineNum}:{linePos} {type}: {message}<br />
-          <span>{line}</span><br />
-          <span>{pointer}</span><br />
+          <div>:{lineNum}:{linePos} {type}: {message}</div>
+          <div>{line}</div>
+          <div>{pointer}</div>
         </div>
       {/each}
     </div>
@@ -158,7 +158,7 @@
     padding: 0.5rem 1rem;
   }
 
-  .messages > div > span {
+  .messages > div > div {
     white-space: pre;
   }
 </style>
