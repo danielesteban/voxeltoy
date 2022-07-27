@@ -31,11 +31,13 @@ export const deserialize = (data) => {
   if (typeof data === 'string') {
     data = JSON.parse(data);
   }
+  delete atlas.editor;
   atlas.source.set(data.atlas);
   rendering.background.set(`#${('000000' + data.background.toString(16)).slice(-6)}`);
   rendering.effects.edges.color.set(`#${('000000' + data.edgesColor.toString(16)).slice(-6)}`);
   rendering.effects.edges.intensity.set(data.edgesIntensity);
   rendering.resolution.set(data.resolution);
+  delete scene.editor;
   scene.source.set(data.scene);
 };
 

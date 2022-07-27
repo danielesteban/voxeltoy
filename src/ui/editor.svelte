@@ -1,7 +1,3 @@
-<script context="module">
-  const Storage = new Map();
-</script>
-
 <script>
   import { tick, onMount } from 'svelte';
 
@@ -23,8 +19,8 @@
       minimap: { enabled: false },
       theme: 'vs-dark',
     });
-    if (Storage.has(source)) {
-      const { model, view } = Storage.get(source);
+    if (state.editor) {
+      const { model, view } = state.editor;
       editor.setModel(model);
       editor.restoreViewState(view);
     } else {
@@ -59,12 +55,13 @@
         isFromEditor = false;
       }, 300);
     });
+    editor.focus();
     window.addEventListener('resize', resizeEditor, false);
     return () => {
-      Storage.set(source, {
+      state.editor = {
         model: editor.getModel(),
         view: editor.saveViewState(),
-      });
+      };
       editor.dispose();
       clearTimeout(debounce);
       window.removeEventListener('resize', resizeEditor);

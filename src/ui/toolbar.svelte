@@ -1,5 +1,9 @@
 <script>
-  import { deserialize, examples, serialize, scene, tool } from '../state.js';
+  import {
+    examples, scene, tool,
+    deserialize,
+    serialize
+  } from '../state.js';
   import Dropdown from './dropdown.svelte';
 
   let loader;
