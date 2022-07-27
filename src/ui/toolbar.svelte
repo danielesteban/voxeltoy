@@ -102,6 +102,10 @@
     cursor: pointer;
   }
 
+  .view:last-child {
+    margin-left: auto;
+  }
+
   .view:hover {
     color: #393;
   }
