@@ -1,18 +1,12 @@
 <script>
   import { onMount } from 'svelte';
-  import { view, deserialize } from '../state/app.js';
   import { baseURL, scene } from '../state/server.js';
 
   let items = [];
   let page = 0;
-  const loadScene = (id) => () => (
-    scene.load(id)
-      .then((scene) => {
-        deserialize(scene);
-        view.set('scene');
-      })
-      .catch(() => {})
-  );
+  const loadScene = (id) => () => {
+    location.hash = `/${id}`;
+  };
   onMount(() => {
     const controller = new AbortController();
     scene.list(page, controller.signal)

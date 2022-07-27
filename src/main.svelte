@@ -1,9 +1,25 @@
 <script>
-  import { rendering } from './state/app.js';
+  import { view, rendering, deserialize } from './state/app.js';
+  import { scene } from './state/server.js';
   import App from './app.svelte';
   
   let hasError = false;
   let isLoading = true;
+
+  const router = () => {
+    const id = location.hash.slice(2).split('/')[0];
+    if (id) {
+      scene
+        .load(id)
+        .then((scene) => {
+          deserialize(scene);
+          view.set('scene');
+        })
+        .catch(() => {
+          location.hash = '/';
+        });
+    }
+  };
 
   Promise.all([
     (async () => {
@@ -21,6 +37,8 @@
   ])
     .then(([gpu]) => {
       rendering.gpu = gpu;
+      window.addEventListener('hashchange', router, false);
+      router();
     })
     .catch((e) => {
       console.error(e);

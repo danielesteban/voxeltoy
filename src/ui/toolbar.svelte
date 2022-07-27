@@ -22,6 +22,9 @@
     delete scene.editor;
     scene.source.set(example);
     $view = 'scene';
+    if (location.hash) {
+      location.hash = '/';
+    }
   };
   const importScene = () => (
     loader.click()
@@ -34,7 +37,11 @@
     const reader = new FileReader();
     reader.addEventListener('load', () => {
       deserialize(JSON.parse(reader.result));
+      $view = 'scene';
       loader.value = null;
+      if (location.hash) {
+        location.hash = '/';
+      }
     }, false);
     reader.readAsText(file);
   };
