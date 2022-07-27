@@ -32,11 +32,17 @@
     }
     const subscriptions = [
       errors.subscribe((errors) => {
-        if (!errors.length) {
-          return;
-        }
-        showErrors = true;
-        tick().then(resizeEditor);
+        monaco.editor.setModelMarkers(
+          editor.getModel(),
+          'Errors',
+          errors.map(({ lineNum, linePos, length, message }) => ({
+            message,
+            startLineNumber: lineNum,
+            endLineNumber: lineNum,
+            startColumn: linePos,
+            endColumn: linePos + length,
+          }))
+        );
       }),
       source.subscribe((value) => {
         if (!isFromEditor) {
@@ -73,13 +79,14 @@
     <div class="toggle" on:click={toggleErrors}>
       <div class="status" class:error={$errors.length} />
       {$errors.length} errors
+      <div class="arrow" />
     </div>
     <div class="messages">
-      {#each $errors as messages}
+      {#each $errors as { lineNum, linePos, type, message, line, pointer }}
         <div>
-          {#each messages as message}
-            <div>{message}</div>
-          {/each}
+          :{lineNum}:{linePos} {type}: {message}<br />
+          <span>{line}</span><br />
+          <span>{pointer}</span><br />
         </div>
       {/each}
     </div>
@@ -112,15 +119,29 @@
   .toggle {
     display: flex;
     align-items: center;
-    padding: 0.5rem 1rem;
+    justify-content: flex-end;
+    padding: 0.5rem 1.5rem;
     cursor: pointer;
     gap: 0.5rem;
+    background-color: #111;
+  }
+
+  .arrow {
+    width: 0; 
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid #fff;
+  }
+
+  .errors.open .arrow {
+    transform: rotate(180deg);
   }
 
   .status {
-    width: 1rem;
-    height: 1rem;
-    border-radius: 0.5rem;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 0.25rem;
     background-color: #393;
   }
 
@@ -129,12 +150,15 @@
   }
 
   .messages {
-    background-color: #111;
+    background-color: #1e1e1e;
     overflow-y: auto;
   }
 
   .messages > div {
     padding: 0.5rem 1rem;
+  }
+
+  .messages > div > span {
     white-space: pre;
   }
 </style>

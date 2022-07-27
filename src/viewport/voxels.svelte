@@ -57,11 +57,17 @@
       shader.compilationInfo().then(({ messages }) => (
         state.set(messages.map(({ length, lineNum, linePos, message, type }) => {
           hasError = true;
-          const line = lines[lineNum - 1];
-          const pointer = Array.from({ length: linePos - 1 + length }, (v, i) => (
-            i >= (linePos - 1) ? '^' : ' '
-          )).join('');
-          return [`:${lineNum - lineOffset}:${linePos} ${type}: ${message}`, `${line}`, `${pointer}`];
+          return {
+            line: lines[lineNum - 1],
+            lineNum: lineNum - lineOffset,
+            linePos,
+            length,
+            message,
+            pointer: Array.from({ length: linePos - 1 + length }, (v, i) => (
+              i >= (linePos - 1) ? '^' : ' '
+            )).join(''),
+            type,
+          };
         }))
       ));
     };
