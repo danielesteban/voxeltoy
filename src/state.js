@@ -48,4 +48,5 @@ export const serialize = () => JSON.stringify({
   edgesIntensity: get(rendering.effects.edges.intensity),
   resolution: get(rendering.resolution),
   scene: get(scene.source),
+  version: 1,
 });
