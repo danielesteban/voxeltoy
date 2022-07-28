@@ -21,7 +21,7 @@ export const rendering = {
     },
   },
   gpu: null,
-  resolution: writable(300),
+  resolution: writable(200),
 };
 export const scene = {
   errors: writable([]),
@@ -39,7 +39,7 @@ export const deserialize = (data) => {
   rendering.background.set(`#${('000000' + (data.background || 0).toString(16)).slice(-6)}`);
   rendering.effects.edges.color.set(`#${('000000' + (data.edgesColor || 0).toString(16)).slice(-6)}`);
   rendering.effects.edges.intensity.set(data.edgesIntensity !== undefined ? data.edgesIntensity : 0.3);
-  rendering.resolution.set(data.resolution || 300);
+  rendering.resolution.set(data.resolution || 200);
   delete scene.editor;
   scene.source.set(data.scene);
   meta.id.set(data.id || '');

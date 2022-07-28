@@ -22,7 +22,7 @@ export const create = [
   body('resolution')
     .isInt()
     .toInt()
-    .isIn([100, 200, 300]),
+    .isIn([100, 200, 300, 400]),
   body('scene')
     .trim()
     .not().isEmpty(),
