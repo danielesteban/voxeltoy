@@ -62,7 +62,7 @@ export const list = (filter) => ([
   checkValidationResult,
   (req, res, next) => {
     const { page } = req.params;
-    const pageSize = 10;
+    const pageSize = 9;
     const selector = {};
     let sorting;
     switch (filter) {

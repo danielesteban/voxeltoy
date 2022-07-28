@@ -1,21 +1,36 @@
 <script>
   import { onMount } from 'svelte';
   import { baseURL, scene } from '../state/server.js';
+  import Intersection from './intersection.svelte';
 
   let items = [];
-  let page = 0;
+  let fetching = false;
+  let next = 0;
+  const fetchListing = (page) => () => {
+    if (fetching) {
+      fetching.abort();
+    }
+    fetching = new AbortController();
+    next = false;
+    scene.list(page, fetching.signal)
+      .then(({ pages, scenes }) => {
+        items = page > 0 ? [...items, ...scenes] : scenes;
+        next = page < (pages - 1) ? (page + 1) : false;
+      })
+      .catch(() => {})
+      .finally(() => {
+        fetching = false;
+      })
+  };
   const loadScene = (id) => () => {
     location.hash = `/${id}`;
   };
   onMount(() => {
-    const controller = new AbortController();
-    scene.list(page, controller.signal)
-      .then(({ pages, scenes }) => {
-        items = scenes;
-      })
-      .catch(() => {});
+    fetchListing(0)();
     return () => {
-      controller.abort();
+      if (fetching) {
+        fetching.abort();
+      }
     };
   });
 </script>
@@ -33,6 +48,11 @@
       </div>
     </div>
   {/each}
+  {#if fetching || next}
+    <Intersection on:intersect={fetchListing(next)} enabled={!!next}>
+      Loading...
+    </Intersection>
+  {/if}
 </div>
 
 <style>
@@ -44,7 +64,7 @@
     padding: 1rem;
     gap: 1rem;
     flex-wrap: wrap;
-    overflow-y: auto;
+    overflow-y: overlay;
   }
 
   .item {
@@ -54,6 +74,7 @@
   }
 
   .item > img {
+    border-radius: 0.25rem 0.25rem 0 0;
     width: 256px;
     height: 256px;
   }

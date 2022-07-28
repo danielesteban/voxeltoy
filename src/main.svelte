@@ -6,19 +6,29 @@
   let hasError = false;
   let isLoading = true;
 
+  let controller = false;
   const router = () => {
-    const id = location.hash.slice(2).split('/')[0];
+    if (controller) {
+      controller.abort();
+      controller = false;
+    }
+    const [id] = location.hash.slice(2).split('/');
     if (id === 'gallery') {
       $view = 'gallery';
     } else if (id) {
+      controller = new AbortController();
       scene
-        .load(id)
+        .load(id, controller.signal)
         .then((scene) => {
+          controller = false;
           deserialize(scene);
           view.set('scene');
         })
-        .catch(() => {
-          location.hash = '/';
+        .catch((e) => {
+          if (e.name !== 'AbortError') {
+            controller = false;
+            location.hash = '/';
+          }
         });
     } else if ($view === 'gallery') {
       $view = 'scene';
@@ -90,6 +100,24 @@
 
   :global(canvas) {
     vertical-align: middle;
+  }
+
+  :global(::-webkit-scrollbar) {
+    width: 8px;
+    background-color: rgba(0, 0, 0, 0);
+  }
+
+  :global(::-webkit-scrollbar:hover) {
+    background-color: rgba(0, 0, 0, 0);
+  }
+
+  :global(::-webkit-scrollbar-thumb:vertical) {
+    background: #444;
+    border-radius: 100px;
+  }
+
+  :global(::-webkit-scrollbar-thumb:vertical:active) {
+    background: #555;
   }
 
   .canary, .loading {
