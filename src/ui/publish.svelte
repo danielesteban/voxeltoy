@@ -45,7 +45,7 @@
       {/if}
       <div class="submit">
         <button type="submit" disabled={isSending}>
-          {isUpdate ? 'Update' : 'Publish'}
+          {isUpdate ? 'Save' : 'Publish'}
         </button>
       </div>
     </form>

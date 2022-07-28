@@ -10,11 +10,13 @@
   let loader;
   let downloader;
 
+  const { id, author, title, hasModified } = meta;
   const views = [
     { id: 'scene', name: 'Scene' },
     { id: 'atlas', name: 'Atlas' },
     { id: 'rendering', name: 'Rendering' },
   ];
+
   const setView = (value) => () => {
     $view = value;
   };
@@ -50,12 +52,9 @@
     downloader.href = URL.createObjectURL(blob);
     downloader.click();
   };
-
   const goToGallery = () => {
     location.hash = '/gallery';
   };
-
-  const { id, author, title } = meta;
 </script>
 
 <div class="helpers">
@@ -65,16 +64,16 @@
 </div>
 
 <div>
-  <div class="menu">
-    {#if $view === 'gallery'}
+  {#if $view === 'gallery'}
+    <div class="menu">
       Voxeltoy
-    {:else}
+    </div>
+  {:else}
+    <div class="menu">
       <!-- svelte-ignore a11y-missing-attribute -->
       <a on:click={goToGallery}>Voxeltoy</a>
       &gt; {$title} by {$author ? $author : ($session ? $session.name : 'anonymous')}
-    {/if}
-  </div>
-  {#if $view !== 'gallery'}
+    </div>
     <div class="toolbar">
       <div>
         <Dropdown>
@@ -110,13 +109,19 @@
         {/each}
       </div>
       <div>
-        <div class="view" class:enabled={$view === 'publish'} on:click={setView('publish')}>
-          {#if $id && $session && $author === $session.name}
-            Update
-          {:else}
-            Publish
-          {/if}
-        </div>
+        {#if $hasModified}
+          <div
+            class="view"
+            class:enabled={$view === 'publish'}
+            on:click={setView('publish')}
+          >
+            {#if $id && $session && $author === $session.name}
+              Save
+            {:else}
+              Publish
+            {/if}
+          </div>
+        {/if}
       </div>
     </div>
   {/if}

@@ -42,12 +42,15 @@
       }),
       source.subscribe((value) => {
         if (!isFromEditor) {
+          isFromEditor = true;
           editor.setValue(value);
+          isFromEditor = false;
         }
       }),
     ];
     isFromEditor = false;
     editor.onDidChangeModelContent(() => {
+      if (isFromEditor) return;
       if (debounce) clearTimeout(debounce);
       debounce = setTimeout(() => {
         isFromEditor = true;
@@ -99,7 +102,7 @@
   }
 
   .wrapper {
-    overflow: hidden;
+    min-height: 0;
   }
 
   .errors {

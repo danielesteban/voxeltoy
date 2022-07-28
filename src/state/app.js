@@ -8,29 +8,42 @@ import Example4 from '../shaders/example4.wgsl';
 export const examples = [Example1, Example2, Example3, Example4];
 export const view = writable('scene');
 
-export const atlas = {
-  errors: writable([]),
-  source: writable(DefaultAtlas),
-};
-export const rendering = {
-  background: writable('#000000'),
-  effects: {
-    edges: {
-      color: writable('#000000'),
-      intensity: writable(0.3),
-    },
-  },
-  gpu: null,
-  resolution: writable(200),
-};
-export const scene = {
-  errors: writable([]),
-  source: writable(examples[0]),
-};
 export const meta = {
   id: writable(''),
   author: writable(''),
   title: writable('Untitled'),
+  hasModified: writable(false),
+};
+
+const sceneWritable = (value) => {
+  const { subscribe, set } = writable(value);
+  return {
+    subscribe,
+    set(value) {
+      meta.hasModified.set(true);
+      set(value);
+    },
+  }
+};
+
+export const scene = {
+  errors: writable([]),
+  source: sceneWritable(examples[0]),
+};
+export const atlas = {
+  errors: writable([]),
+  source: sceneWritable(DefaultAtlas),
+};
+export const rendering = {
+  background: sceneWritable('#000000'),
+  effects: {
+    edges: {
+      color: sceneWritable('#000000'),
+      intensity: sceneWritable(0.3),
+    },
+  },
+  gpu: null,
+  resolution: sceneWritable(200),
 };
 
 export const deserialize = (data) => {
@@ -45,6 +58,7 @@ export const deserialize = (data) => {
   meta.id.set(data.id || '');
   meta.author.set(data.author || '');
   meta.title.set(data.title || 'Untitled');
+  meta.hasModified.set(false);
 };
 
 export const serialize = () => ({
