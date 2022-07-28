@@ -196,6 +196,9 @@ export const update = [
     .optional()
     .trim()
     .not().isEmpty(),
+  body('screenshot')
+    .optional()
+    .isBase64(),
   checkValidationResult,
   (req, res, next) => {
     const update = {};
@@ -221,10 +224,18 @@ export const update = [
       update.scene = req.body.scene;
     }
     Scene
-      .updateOne({ author: req.user._id, slug: req.params.slug }, { $set: update })
-      .then(() => (
-        res.status(200).end()
-      ))
+      .findOneAndUpdate({ author: req.user._id, slug: req.params.slug }, { $set: update })
+      .select('_id')
+      .then((scene) => {
+        if (!scene) {
+          throw notFound();
+        }
+        if (req.body.screenshot) {
+          return Screenshot
+            .updateOne({ scene: scene.id }, { $set: { buffer: Buffer.from(req.body.screenshot, 'base64') } });
+        }
+      })
+      .then(() => res.status(200).end())
       .catch(next);
   },
 ];
