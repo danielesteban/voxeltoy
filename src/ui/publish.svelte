@@ -1,5 +1,5 @@
 <script>
-  import { view, meta, rendering, serialize } from '../state/app.js';
+  import { meta, rendering, serialize } from '../state/app.js';
   import { session, scene } from '../state/server.js';
   import Session from './session.svelte';
 
@@ -19,9 +19,9 @@
         screenshot: screenshot ? screenshot.slice(22) : undefined,
       })
     ))
-      .then(() => (
-        view.set('gallery')
-      ))
+      .then(() => {
+        location.hash = '/gallery';
+      })
       .catch(() => {})
   };
 </script>
