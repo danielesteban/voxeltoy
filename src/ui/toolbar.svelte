@@ -110,6 +110,7 @@
   }
 
   .view:last-child {
+    display: none;
     margin-left: auto;
   }
 
