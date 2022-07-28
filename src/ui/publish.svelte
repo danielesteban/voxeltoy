@@ -1,34 +1,60 @@
 <script>
   import { meta, rendering, serialize } from '../state/app.js';
-  import { session, scene } from '../state/server.js';
+  import { baseURL, session, scene } from '../state/server.js';
   import Session from './session.svelte';
 
   const { id, author, title } = meta;
 
   let isSending = false;
   let isUpdate = $id && $author === $session.name;
-  const screenshot = isUpdate ? false : rendering.screenshot();
+  let screenshot = isUpdate ? `${baseURL}scene/${$id}/screenshot` : rendering.screenshot();
+  const getScreenshot = () => (
+    screenshot.slice(0, 5) === 'data:' ? (
+      screenshot.slice(22)
+    ) : (
+      undefined
+    )
+  );
+  const refreshScreenshot = () => {
+    screenshot = rendering.screenshot();
+  };
   const publish = (e) => {
     e.preventDefault();
+    if (isSending) {
+      return;
+    }
     isSending = true;
-    (isUpdate ? (
-      scene.update($id, serialize())
-    ) : (
-      scene.create({
+    scene
+      .create({
         ...serialize(),
-        screenshot: screenshot ? screenshot.slice(22) : undefined,
+        screenshot: getScreenshot(),
       })
-    ))
+      .then((id) => {
+        location.hash = `/${id}`;
+      })
+      .catch(() => {});
+  };
+  const update = (e) => {
+    e.preventDefault();
+    if (isSending) {
+      return;
+    }
+    isSending = true;
+    scene
+      .update($id, {
+        ...serialize(),
+        screenshot: getScreenshot(),
+      })
       .then(() => {
         location.hash = '/gallery';
       })
-      .catch(() => {})
+      .catch(() => {});
   };
 </script>
 
 <div class="wrapper">
   {#if $session}
-    <form on:submit={publish}>
+    <form on:submit={isUpdate ? update : publish}>
       <div class="input">
         <label for="author">Author:</label>
         <input value={$session.name} autocomplete="off" id="author" type="text" disabled />
@@ -37,12 +63,18 @@
         <label for="title">Title:</label>
         <input bind:value={$title} autocomplete="off" id="title" type="text" required />
       </div>
-      {#if screenshot}
-        <div class="input screenshot">
-          <label for="name">Screenshot:</label>
-          <div class="image" style={screenshot ? `background-image: url(${screenshot})` : ''} />
-        </div>
-      {/if}
+      <div class="input screenshot">
+        <label for="name">
+          Screenshot:
+          <!-- svelte-ignore a11y-missing-attribute missing-declaration -->
+          <a on:click={refreshScreenshot}>refresh</a>
+        </label>
+        <img
+          alt="screenshot"
+          crossorigin="anonymous"
+          src={screenshot}
+        />
+      </div>
       <div class="submit">
         <button type="submit" disabled={isSending}>
           {isUpdate ? 'Save' : 'Publish'}
@@ -83,9 +115,15 @@
   }
 
   .input > label {
-    display: block;
+    display: flex;
     font-weight: 700;
     margin-bottom: 0.25rem;
+  }
+
+  .input > label > a {
+    margin-left: auto;
+    cursor: pointer;
+    text-decoration: underline;
   }
 
   .input > input {
@@ -103,7 +141,7 @@
     opacity: 0.3;
   }
 
-  .image {
+  .input > img {
     background-color: #666;
     width: 300px;
     height: 300px;

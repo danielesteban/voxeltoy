@@ -68,6 +68,13 @@
     <div class="menu">
       Voxeltoy
     </div>
+    <div class="toolbar">
+      <div>
+        <div class="view enabled">
+          Latest
+        </div>
+      </div>
+    </div>
   {:else}
     <div class="menu">
       <!-- svelte-ignore a11y-missing-attribute -->
@@ -83,7 +90,7 @@
           </div>
           <svelte:fragment slot="options">
             <div class="load">
-              Load Example
+              Examples
               <div class="arrow" />
               <div class="examples">
                 {#each examples as example, i}
@@ -99,6 +106,17 @@
             </div>
             <div class="action" on:click={exportScene}>
               Export
+            </div>
+            <div
+              class="action"
+              class:disabled={!$hasModified}
+              on:click={$hasModified ? setView('publish') : null}
+            >
+              {#if $id && $session && $author === $session.name}
+                Save
+              {:else}
+                Publish
+              {/if}
             </div>
           </svelte:fragment>
         </Dropdown>
@@ -204,6 +222,15 @@
   .action:hover {
     color: #393;
     cursor: pointer;
+  }
+
+  .action.disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+
+  .action.disabled:hover {
+    color: #fff;
   }
 
   .load {
