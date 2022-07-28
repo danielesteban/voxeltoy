@@ -102,6 +102,28 @@
     vertical-align: middle;
   }
 
+  :global(button) {
+    cursor: pointer;
+    background-color: #393;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border: 1px solid #000;
+    border-radius: 0.25rem;
+    font-family: inherit;
+    font-weight: inherit;
+    outline: none;
+  }
+
+  :global(button:active) {
+    transform: translate(0, 1px);
+  }
+
+  :global(button:disabled) {
+    cursor: default;
+    opacity: 0.3;
+    transform: none;
+  }
+
   :global(::-webkit-scrollbar) {
     width: 8px;
     background-color: rgba(0, 0, 0, 0);

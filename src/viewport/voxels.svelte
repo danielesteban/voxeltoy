@@ -10,6 +10,26 @@
     parseInt(hex.slice(3, 5), 16) / 255,
     parseInt(hex.slice(5, 7), 16) / 255
   ];
+  
+  const screenshot = (renderer, resolution = 512) => () => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = resolution;
+    canvas.height = resolution;
+    let x = 0;
+    let y = 0;
+    let w = renderer.canvas.width;
+    let h = renderer.canvas.height;
+    if (w > h) {
+      x = (h - w) * -0.5;
+      w = h;
+    } else {
+      y = (w - h) * -0.5;
+      h = w;
+    }
+    ctx.drawImage(renderer.canvas, x, y, h, w, 0, 0, resolution, resolution);
+    return canvas.toDataURL();
+  };
 
   let viewport;
   onMount(() => {
@@ -25,7 +45,7 @@
     }, false);
 
     let clock = performance.now() / 1000;
-    let hasError = false;  
+    let hasError = false;
     let volume;
     const animate = () => {
       requestAnimationFrame(animate);
@@ -115,25 +135,7 @@
         processShaderErrors(volume.voxelizer, scene.errors);
       }),
     ];
-    rendering.screenshot = (resolution = 512) => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      canvas.width = resolution;
-      canvas.height = resolution;
-      let x = 0;
-      let y = 0;
-      let w = renderer.canvas.width;
-      let h = renderer.canvas.height;
-      if (w > h) {
-        x = (h - w) * -0.5;
-        w = h;
-      } else {
-        y = (w - h) * -0.5;
-        h = w;
-      }
-      ctx.drawImage(renderer.canvas, x, y, h, w, 0, 0, resolution, resolution);
-      return canvas.toDataURL();
-    };
+    rendering.screenshot = screenshot(renderer);
     return () => {
       subscriptions.forEach((unsubscribe) => unsubscribe());
       input.destroy();

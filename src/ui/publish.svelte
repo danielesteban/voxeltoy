@@ -154,25 +154,4 @@
     text-align: center;
     margin-top: 0.5rem;
   }
-
-  .submit > button {
-    cursor: pointer;
-    background-color: #393;
-    color: #fff;
-    padding: 0.5rem 1rem;
-    border: 1px solid #000;
-    outline: 0;
-    border-radius: 0.25rem;
-    font-family: inherit;
-  }
-
-  .submit > button:active {
-    transform: translate(0, 1px);
-  }
-
-  .submit > button:disabled {
-    cursor: default;
-    opacity: 0.3;
-    transform: none;
-  }
 </style>
