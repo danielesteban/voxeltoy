@@ -7,9 +7,6 @@
   import { session } from '../state/server.js'; 
   import Dropdown from './dropdown.svelte';
 
-  let loader;
-  let downloader;
-
   const { id, author, title, hasModified } = meta;
   const views = [
     { id: 'scene', name: 'Scene' },
@@ -17,32 +14,38 @@
     { id: 'rendering', name: 'Rendering' },
   ];
 
-  const setView = (value) => () => {
-    $view = value;
-  };
-  const loadExample = (example) => () => {
-    deserialize({ scene: example });
+  const load = (scene) => {
+    deserialize(scene);
     $view = 'scene';
     if (location.hash) {
       location.hash = '/';
     }
   };
-  const importScene = () => (
-    loader.click()
+
+  const goToGallery = () => {
+    location.hash = '/gallery';
+  };
+
+  const loadExample = (example) => () => (
+    load({ scene: example })
   );
-  const loadScene = () => {
+
+  const setView = (value) => () => {
+    $view = value;
+  };
+
+  let loader;
+  let downloader;
+  const importScene = () => loader.click();
+  const readScene = () => {
     const file = loader.files[0];
     if (!file) {
       return;
     }
     const reader = new FileReader();
     reader.addEventListener('load', () => {
-      deserialize(JSON.parse(reader.result));
-      $view = 'scene';
       loader.value = null;
-      if (location.hash) {
-        location.hash = '/';
-      }
+      load(JSON.parse(reader.result));
     }, false);
     reader.readAsText(file);
   };
@@ -52,13 +55,10 @@
     downloader.href = URL.createObjectURL(blob);
     downloader.click();
   };
-  const goToGallery = () => {
-    location.hash = '/gallery';
-  };
 </script>
 
 <div class="helpers">
-  <input type="file" accept="application/json" on:change={loadScene} bind:this={loader} />
+  <input type="file" accept="application/json" on:change={readScene} bind:this={loader} />
   <!-- svelte-ignore a11y-missing-attribute a11y-missing-content -->
   <a bind:this={downloader} />
 </div>
