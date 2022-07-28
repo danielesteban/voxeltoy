@@ -3,7 +3,7 @@ import passport from 'passport';
 import LocalStrategy from 'passport-local';
 import { User } from '../models/index.mjs';
 
-const auth = (req, state, next) => {
+const auth = (req, next) => {
   let token;
   if (req.headers.authorization) {
     const [type, value] = req.headers.authorization.split(' ');
@@ -19,7 +19,7 @@ const auth = (req, state, next) => {
     .fromToken(token)
     .then((user) => {
       if (user) {
-        state.user = user;
+        req.user = user;
       }
       next();
     })
@@ -27,11 +27,11 @@ const auth = (req, state, next) => {
 };
 
 export const authenticate = (req, res, next) => (
-  auth(req, req, next)
+  auth(req, next)
 );
 
 export const requireAuth = (req, res, next) => (
-  auth(req, req, (err) => {
+  auth(req, (err) => {
     if (err || !req.user) {
       next(unauthorized(err));
       return;
