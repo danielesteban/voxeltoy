@@ -39,10 +39,12 @@
   .wrapper {
     background-color: #1e1e1e;
     display: flex;
-    align-items: flex-start;
+    align-content: start;
     justify-content: center;
-    padding: 1rem 0;
+    padding: 1rem;
     gap: 1rem;
+    flex-wrap: wrap;
+    overflow-y: auto;
   }
 
   .item {

@@ -9,7 +9,7 @@
   import Toolbar from './ui/toolbar.svelte';
   import Voxels from './viewport/voxels.svelte';
 
-  let uiWidth = 800;
+  let uiWidth = 832;
   const drag = {
     enabled: false,
     initial: 0,
