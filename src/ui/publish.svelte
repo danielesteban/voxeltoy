@@ -152,12 +152,12 @@
 
   .submit {
     text-align: center;
-    margin-top: 1rem;
+    margin-top: 0.5rem;
   }
 
   .submit > button {
     cursor: pointer;
-    background-color: #1e1e1e;
+    background-color: #393;
     color: #fff;
     padding: 0.5rem 1rem;
     border: 1px solid #000;
@@ -166,7 +166,13 @@
     font-family: inherit;
   }
 
+  .submit > button:active {
+    transform: translate(0, 1px);
+  }
+
   .submit > button:disabled {
+    cursor: default;
     opacity: 0.3;
+    transform: none;
   }
 </style>

@@ -44,16 +44,16 @@
 </script>
 
 <form on:submit={isRegister ? submitRegister : submitLogin}>
-  <div class="input">
-    <label for="email">Email:</label>
-    <input bind:value={email} autocomplete="username" id="email" type="email" required />
-  </div>
   {#if isRegister}
     <div class="input">
       <label for="name">Name:</label>
       <input bind:value={name} autocomplete="off" id="name" type="text" required />
     </div>
   {/if}
+  <div class="input">
+    <label for="email">Email:</label>
+    <input bind:value={email} autocomplete="username" id="email" type="email" required />
+  </div>
   <div class="input">
     <label for="password">Password:</label>
     <input bind:value={password} autocomplete={isRegister ? 'current-password' : 'new-password'} id="password" type="password" required />
@@ -100,12 +100,11 @@
 
   .input > label {
     font-weight: 700;
-    width: 8rem;
+    width: 6rem;
   }
 
   .input > input {
     box-sizing: border-box;
-    width: 10rem;
     padding: 0.5rem;
     border: 1px solid #000;
     outline: 0;
@@ -120,7 +119,7 @@
 
   .submit > button {
     cursor: pointer;
-    background-color: #1e1e1e;
+    background-color: #393;
     color: #fff;
     padding: 0.5rem 1rem;
     border: 1px solid #000;
@@ -129,8 +128,14 @@
     font-family: inherit;
   }
 
+  .submit > button:active {
+    transform: translate(0, 1px);
+  }
+
   .submit > button:disabled {
+    cursor: default;
     opacity: 0.3;
+    transform: none;
   }
 
   .alternative {
