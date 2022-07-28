@@ -15,6 +15,7 @@
   onMount(() => {
     let debounce;
     let isFromEditor = true;
+    let isFromSubscription = false;
     editor = monaco.editor.create(wrapper, {
       minimap: { enabled: false },
       theme: 'vs-dark',
@@ -42,15 +43,17 @@
       }),
       source.subscribe((value) => {
         if (!isFromEditor) {
-          isFromEditor = true;
+          isFromSubscription = true;
           editor.setValue(value);
-          isFromEditor = false;
+          isFromSubscription = false;
         }
       }),
     ];
     isFromEditor = false;
     editor.onDidChangeModelContent(() => {
-      if (isFromEditor) return;
+      if (isFromSubscription) {
+        return;
+      }
       if (debounce) clearTimeout(debounce);
       debounce = setTimeout(() => {
         isFromEditor = true;
