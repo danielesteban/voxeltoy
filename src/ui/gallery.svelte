@@ -21,15 +21,15 @@
 </script>
 
 <div class="wrapper">
-  {#each items as { id, name, user } (id)}
+  {#each items as { id, author, title } (id)}
     <div class="item" on:click={loadScene(id)}>
       <img
-        alt={name}
+        alt={title}
         crossorigin="anonymous"
         src="{baseURL}scene/{id}/screenshot"
       />
       <div>
-        {name} <span>by {user}</span>
+        {title} <span>by {author}</span>
       </div>
     </div>
   {/each}

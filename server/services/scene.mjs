@@ -4,7 +4,7 @@ import { Scene, Screenshot } from '../models/index.mjs';
 import { checkValidationResult } from './errorHandler.mjs';
 
 export const create = [
-  body('name')
+  body('title')
     .trim()
     .isLength({ min: 1, max: 25 }),
   body('atlas')
@@ -31,14 +31,14 @@ export const create = [
   checkValidationResult,
   (req, res, next) => {
     const scene = new Scene({
-      name: req.body.name,
+      author: req.user._id,
+      title: req.body.title,
       atlas: req.body.atlas,
       background: req.body.background,
       edgesColor: req.body.edgesColor,
       edgesIntensity: req.body.edgesIntensity,
       resolution: req.body.resolution,
       scene: req.body.scene,
-      user: req.user._id,
     });
     const screenshot = new Screenshot({
       buffer: Buffer.from(req.body.screenshot, 'base64'),
@@ -78,14 +78,14 @@ export const list = (filter) => ([
           .sort(sorting)
           .skip(page * pageSize)
           .limit(pageSize)
-          .select('-_id name slug user')
-          .populate('user', '-_id name')
+          .select('-_id author title slug')
+          .populate('author', '-_id name')
           .lean()
           .then((scenes) => (
             res.json({
               pages: Math.ceil(count / pageSize),
-              scenes: scenes.map(({ name, slug: id, user: { name: user } }) => ({
-                id, name, user,
+              scenes: scenes.map(({ title, slug: id, author: { name: author } }) => ({
+                id, author, title
               })),
             })
           ))
@@ -102,8 +102,8 @@ export const load = [
   (req, res, next) => {
     Scene
       .findOne({ slug: req.params.slug })
-      .select('-_id -__v -slug -createdAt -updatedAt')
-      .populate('user', '-_id name')
+      .select('-_id -__v -createdAt -updatedAt')
+      .populate('author', '-_id name')
       .lean()
       .then((scene) => {
         if (!scene) {
@@ -111,7 +111,9 @@ export const load = [
         }
         res.json({
           ...scene,
-          user: scene.user.name,
+          id: scene.slug,
+          author: scene.author.name,
+          slug: undefined,
         });
       })
       .catch(next);
@@ -165,7 +167,7 @@ export const update = [
   param('slug')
     .trim()
     .not().isEmpty(),
-  body('name')
+  body('title')
     .optional()
     .trim()
     .isLength({ min: 1, max: 25 }),
@@ -197,8 +199,8 @@ export const update = [
   checkValidationResult,
   (req, res, next) => {
     const update = {};
-    if (req.body.name) {
-      update.name = req.body.name;
+    if (req.body.title) {
+      update.title = req.body.title;
     }
     if (req.body.atlas) {
       update.atlas = req.body.atlas;
@@ -219,7 +221,7 @@ export const update = [
       update.scene = req.body.scene;
     }
     Scene
-      .updateOne({ slug: req.params.slug, user: req.user._id }, { $set: update })
+      .updateOne({ author: req.user._id, slug: req.params.slug }, { $set: update })
       .then(() => (
         res.status(200).end()
       ))

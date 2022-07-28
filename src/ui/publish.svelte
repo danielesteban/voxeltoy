@@ -1,18 +1,24 @@
 <script>
-  import { view, rendering, serialize } from '../state/app.js';
+  import { view, meta, rendering, serialize } from '../state/app.js';
   import { session, scene } from '../state/server.js';
   import Session from './session.svelte';
-  let name = '';
+
+  const { id, author, title } = meta;
+
   let isSending = false;
-  const screenshot = rendering.screenshot();
+  let isUpdate = $id && $author === $session.name;
+  const screenshot = isUpdate ? false : rendering.screenshot();
   const publish = (e) => {
     e.preventDefault();
     isSending = true;
-    scene.create({
-      ...serialize(),
-      name,
-      screenshot: screenshot.slice(22),
-    })
+    (isUpdate ? (
+      scene.update($id, serialize())
+    ) : (
+      scene.create({
+        ...serialize(),
+        screenshot: screenshot ? screenshot.slice(22) : undefined,
+      })
+    ))
       .then(() => (
         view.set('gallery')
       ))
@@ -24,19 +30,23 @@
   {#if $session}
     <form on:submit={publish}>
       <div class="input">
-        <label for="name">Author:</label>
-        <input autocomplete="off" id="name" type="name" value={$session.name} disabled />
+        <label for="author">Author:</label>
+        <input value={$session.name} autocomplete="off" id="author" type="text" disabled />
       </div>
       <div class="input">
-        <label for="name">Name:</label>
-        <input bind:value={name} autocomplete="off" id="name" type="text" required />
+        <label for="title">Title:</label>
+        <input bind:value={$title} autocomplete="off" id="title" type="text" required />
       </div>
-      <div class="input screenshot">
-        <label for="name">Screenshot:</label>
-        <div class="image" style={screenshot ? `background-image: url(${screenshot})` : ''} />
-      </div>
+      {#if screenshot}
+        <div class="input screenshot">
+          <label for="name">Screenshot:</label>
+          <div class="image" style={screenshot ? `background-image: url(${screenshot})` : ''} />
+        </div>
+      {/if}
       <div class="submit">
-        <button type="submit" disabled={isSending}>Publish</button>
+        <button type="submit" disabled={isSending}>
+          {isUpdate ? 'Update' : 'Publish'}
+        </button>
       </div>
     </form>
   {:else}

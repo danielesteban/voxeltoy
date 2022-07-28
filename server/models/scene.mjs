@@ -26,14 +26,14 @@ const SceneSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  name: { type: String, required: true },
-  slug: { type: String, slug: 'name', unique: true },
-  user: {
+  author: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true,
     index: true,
   },
+  title: { type: String, required: true },
+  slug: { type: String, slug: 'title', unique: true },
   createdAt: { type: Date, index: -1 },
 }, { timestamps: true });
 

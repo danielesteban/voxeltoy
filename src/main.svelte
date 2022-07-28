@@ -8,7 +8,9 @@
 
   const router = () => {
     const id = location.hash.slice(2).split('/')[0];
-    if (id) {
+    if (id === 'gallery') {
+      $view = 'gallery';
+    } else if (id) {
       scene
         .load(id)
         .then((scene) => {
@@ -18,7 +20,9 @@
         .catch(() => {
           location.hash = '/';
         });
-    }
+    } else if ($view === 'gallery') {
+      $view = 'scene';
+    } 
   };
 
   Promise.all([

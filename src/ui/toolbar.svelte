@@ -1,9 +1,10 @@
 <script>
   import {
-    examples, scene, view,
+    examples, meta, view,
     deserialize,
     serialize
   } from '../state/app.js';
+  import { session } from '../state/server.js'; 
   import Dropdown from './dropdown.svelte';
 
   let loader;
@@ -13,14 +14,12 @@
     { id: 'scene', name: 'Scene' },
     { id: 'atlas', name: 'Atlas' },
     { id: 'rendering', name: 'Rendering' },
-    { id: 'gallery', name: 'Gallery' },
   ];
   const setView = (value) => () => {
     $view = value;
   };
   const loadExample = (example) => () => {
-    delete scene.editor;
-    scene.source.set(example);
+    deserialize({ scene: example });
     $view = 'scene';
     if (location.hash) {
       location.hash = '/';
@@ -51,6 +50,12 @@
     downloader.href = URL.createObjectURL(blob);
     downloader.click();
   };
+
+  const goToGallery = () => {
+    location.hash = '/gallery';
+  };
+
+  const { id, author, title } = meta;
 </script>
 
 <div class="helpers">
@@ -59,59 +64,96 @@
   <a bind:this={downloader} />
 </div>
 
-<div class="toolbar">
-  <Dropdown>
-    <div class="toggle" slot="toggle">
-      <div class="arrow" />
-      File
-    </div>
-    <svelte:fragment slot="options">
-      <div class="load">
-        Load Example
-        <div class="arrow" />
-        <div class="examples">
-          {#each examples as example, i}
-            <div class="action" on:click={loadExample(example)}>Example {i + 1}</div>
-          {/each}
+<div>
+  <div class="menu">
+    {#if $view === 'gallery'}
+      Voxeltoy
+    {:else}
+      <!-- svelte-ignore a11y-missing-attribute -->
+      <a on:click={goToGallery}>Voxeltoy</a>
+      &gt; {$title} by {$author ? $author : ($session ? $session.name : 'anonymous')}
+    {/if}
+  </div>
+  {#if $view !== 'gallery'}
+    <div class="toolbar">
+      <div>
+        <Dropdown>
+          <div class="toggle" slot="toggle">
+            <div class="arrow" />
+            File
+          </div>
+          <svelte:fragment slot="options">
+            <div class="load">
+              Load Example
+              <div class="arrow" />
+              <div class="examples">
+                {#each examples as example, i}
+                  <div class="action" on:click={loadExample(example)}>Example {i + 1}</div>
+                {/each}
+              </div>
+            </div>
+            <div class="action" on:click={loadExample(examples[0])}>
+              New
+            </div>
+            <div class="action" on:click={importScene}>
+              Import
+            </div>
+            <div class="action" on:click={exportScene}>
+              Export
+            </div>
+          </svelte:fragment>
+        </Dropdown>
+        {#each views as { id, name }}
+          <div class="view" class:enabled={$view === id} on:click={setView(id)}>
+            {name}
+          </div>
+        {/each}
+      </div>
+      <div>
+        <div class="view" class:enabled={$view === 'publish'} on:click={setView('publish')}>
+          {#if $id && $session && $author === $session.name}
+            Update
+          {:else}
+            Publish
+          {/if}
         </div>
       </div>
-      <div class="action" on:click={importScene}>
-        Import
-      </div>
-      <div class="action" on:click={exportScene}>
-        Export
-      </div>
-      <div class="action" on:click={setView('publish')}>
-        Publish
-      </div>
-    </svelte:fragment>
-  </Dropdown>
-  {#each views as { id, name }}
-    <div class="view" class:enabled={$view === id} on:click={setView(id)}>
-      {name}
     </div>
-  {/each}
+  {/if}
 </div>
-
 <style>
   .helpers {
     display: none;
   }
 
+  .menu {
+    background-color: #111;
+    padding: 1rem;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .menu > a {
+    font-weight: 700;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
   .toolbar {
+    background-color: #000;
     display: flex;
     white-space: nowrap;
+    justify-content: space-between;
+  }
+
+  .toolbar > div {
+    display: flex;
   }
 
   .view {
     position: relative;
     padding: 1rem;
     cursor: pointer;
-  }
-
-  .view:last-child {
-    display: none;
-    margin-left: auto;
   }
 
   .view:hover {
