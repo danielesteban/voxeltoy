@@ -7,7 +7,7 @@
 // Color helpers
 // hsl2Rgba(h : f32, s: f32, l: f32) -> vec4<f32>
 
-// Variables
+// Constants
 // atlas.count : i32
 // atlas.width : i32
 // atlas.height : i32

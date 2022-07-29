@@ -22,8 +22,7 @@
 // rotateY(rad : f32) -> mat3x3<f32>
 // rotateZ(rad : f32) -> mat3x3<f32>
 
-// Variables
-// time : f32
+// Constants
 // volume.size : vec3<f32>
 // volume.center : vec3<f32>
 

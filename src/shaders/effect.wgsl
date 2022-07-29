@@ -5,9 +5,6 @@
 // var normalTexture : texture_2d<f32>;
 // var positionTexture : texture_2d<f32>;
 
-// Variables
-// time : f32
-
 struct Effect {
   color : vec3<f32>,
   intensity : f32,
@@ -53,7 +50,7 @@ fn edgesNormal(pixel : vec2<i32>) -> f32 {
   return (edge.x + edge.y + edge.z) * effect.normalScale;
 }
 
-fn getColor(pixel : vec2<i32>, time : f32) -> vec4<f32> {
+fn getColor(pixel : vec2<i32>, size : vec2<i32>, time : f32) -> vec4<f32> {
   var color : vec3<f32> = textureLoad(colorTexture, pixel, 0).xyz;
   color = mix(color, effect.color, clamp(max(edgesDepth(pixel), edgesNormal(pixel)), 0, 1) * effect.intensity);
   return vec4<f32>(color, 1);
