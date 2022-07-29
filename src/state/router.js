@@ -41,11 +41,11 @@ export const init = () => {
 };
 
 export const goTo = (path, force = false) => {
- if (path === location.hash.slice(1)) {
-  if (force) {
-    router();
+  if (path === location.hash.slice(1)) {
+    if (force) {
+      router();
+    }
+    return;
   }
-  return;
- }
- location.hash = path;
+  location.hash = path;
 };
