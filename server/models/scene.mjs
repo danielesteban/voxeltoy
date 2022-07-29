@@ -35,6 +35,7 @@ const SceneSchema = new mongoose.Schema({
   title: { type: String, required: true },
   slug: { type: String, slug: 'title', unique: true },
   createdAt: { type: Date, index: -1 },
+  updatedAt: { type: Date, index: -1 },
 }, { timestamps: true });
 
 SceneSchema.plugin(slug);

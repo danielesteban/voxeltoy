@@ -1,10 +1,10 @@
 <script>
   import {
-    examples, meta, view,
+    examples, meta,
     deserialize,
     serialize
   } from '../state/app.js';
-  import { goTo } from '../state/router.js'; 
+  import { view, goTo } from '../state/router.js'; 
   import { session } from '../state/server.js'; 
   import Dropdown from './dropdown.svelte';
 
@@ -15,13 +15,13 @@
     { id: 'rendering', name: 'Rendering' },
   ];
 
-  const goToGallery = () => (
-    goTo('/gallery')
+  const goToGallery = (filter = '') => () => (
+    goTo(`/gallery/${filter}`)
   );
 
   const load = (scene) => {
     deserialize(scene);
-    $view = 'scene';
+    $view = { id: 'scene' };
     if (location.hash) {
       goTo('/');
     }
@@ -31,8 +31,8 @@
     load({ scene: example })
   );
 
-  const setView = (value) => () => {
-    $view = value;
+  const setView = (id) => () => {
+    $view = { id };
   };
 
   let loader;
@@ -65,22 +65,35 @@
 </div>
 
 <div>
-  {#if $view === 'gallery'}
+  {#if $view.id === 'gallery'}
     <div class="menu">
       Voxeltoy
     </div>
     <div class="toolbar">
       <div>
-        <div class="view enabled">
+        <div class="view" class:enabled={$view.filter === 'latest'} on:click={$view.filter !== 'latest' ? goToGallery() : null}>
           Latest
         </div>
+        {#if $view.filter !== 'latest'}
+          <div class="view enabled">
+            {$view.filter}
+          </div>
+        {/if}
       </div>
     </div>
   {:else}
     <div class="menu">
       <!-- svelte-ignore a11y-missing-attribute -->
-      <a on:click={goToGallery}>Voxeltoy</a>
-      &gt; {$title} by {$author ? $author : ($session ? $session.name : 'anonymous')}
+      <a on:click={goToGallery()}>Voxeltoy</a>
+      &gt; {$title} by
+      {#if $author || $session}
+        <!-- svelte-ignore a11y-missing-attribute -->
+        <a on:click={goToGallery($author || $session.name)}>
+          {$author || $session.name}
+        </a>
+      {:else}
+        anonymous
+      {/if}
     </div>
     <div class="toolbar">
       <div>
@@ -122,7 +135,7 @@
           </svelte:fragment>
         </Dropdown>
         {#each views as { id, name }}
-          <div class="view" class:enabled={$view === id} on:click={setView(id)}>
+          <div class="view" class:enabled={$view.id === id} on:click={setView(id)}>
             {name}
           </div>
         {/each}
@@ -131,7 +144,7 @@
         {#if $hasModified}
           <div
             class="view"
-            class:enabled={$view === 'publish'}
+            class:enabled={$view.id === 'publish'}
             on:click={setView('publish')}
           >
             {#if $id && $session && $author === $session.name}

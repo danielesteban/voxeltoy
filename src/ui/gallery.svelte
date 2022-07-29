@@ -1,18 +1,21 @@
 <script>
-  import { onMount } from 'svelte';
+  import { onDestroy } from 'svelte';
+  import { view } from '../state/router.js';
   import { baseURL, scene } from '../state/server.js';
   import Intersection from './intersection.svelte';
 
   let items = [];
   let fetching = false;
-  let next = 0;
-  const fetchListing = (page) => () => {
+  let next = false;
+
+  const fetchListing = (filter, page) => () => {
     if (fetching) {
       fetching.abort();
     }
     fetching = new AbortController();
     next = false;
-    scene.list(page, fetching.signal)
+    scene
+      .list(filter, page, fetching.signal)
       .then(({ pages, scenes }) => {
         items = page > 0 ? [...items, ...scenes] : scenes;
         next = page < (pages - 1) ? (page + 1) : false;
@@ -20,19 +23,22 @@
       .catch(() => {})
       .finally(() => {
         fetching = false;
-      })
+      });
   };
+
+  onDestroy(() => {
+    if (fetching) {
+      fetching.abort();
+    }
+  });
+
+  $: {
+    fetchListing($view.filter, 0)();
+  }
+
   const loadScene = (id) => () => {
     location.hash = `/${id}`;
   };
-  onMount(() => {
-    fetchListing(0)();
-    return () => {
-      if (fetching) {
-        fetching.abort();
-      }
-    };
-  });
 </script>
 
 <div class="wrapper">
@@ -49,7 +55,7 @@
     </div>
   {/each}
   {#if fetching || next}
-    <Intersection on:intersect={fetchListing(next)} enabled={!!next}>
+    <Intersection on:intersect={fetchListing($view.filter, next)} enabled={!!next}>
       Loading...
     </Intersection>
   {/if}

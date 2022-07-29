@@ -84,9 +84,9 @@ export const scene = {
       signal,
     });
   },
-  list(page, signal) {
+  list(filter, page, signal) {
     return request({
-      endpoint: `scenes/${page}`,
+      endpoint: `scenes/${filter}/${page}`,
       method: 'GET',
       signal,
     });

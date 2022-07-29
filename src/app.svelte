@@ -1,6 +1,6 @@
 <script>
   import { tick } from 'svelte';
-  import { view } from './state/app.js';
+  import { view } from './state/router.js';
   import Atlas from './ui/atlas.svelte';
   import Gallery from './ui/gallery.svelte';
   import Publish from './ui/publish.svelte';
@@ -38,15 +38,15 @@
 <div class="app">
   <div class="ui" style="width: {uiWidth}px">
     <Toolbar />
-    {#if $view === 'atlas'}
+    {#if $view.id === 'atlas'}
       <Atlas />
-    {:else if $view === 'gallery'}
+    {:else if $view.id === 'gallery'}
       <Gallery />
-    {:else if $view === 'publish'}
+    {:else if $view.id === 'publish'}
       <Publish />
-    {:else if $view === 'rendering'}
+    {:else if $view.id === 'rendering'}
       <Rendering />
-    {:else if $view === 'scene'}
+    {:else if $view.id === 'scene'}
       <Scene />
     {/if}
   </div>

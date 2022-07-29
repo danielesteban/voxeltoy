@@ -6,7 +6,6 @@ import Example3 from '../shaders/example3.wgsl';
 import Example4 from '../shaders/example4.wgsl';
 
 export const examples = [Example1, Example2, Example3, Example4];
-export const view = writable('scene');
 
 export const meta = {
   id: writable(''),

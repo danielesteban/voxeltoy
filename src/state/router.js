@@ -1,5 +1,8 @@
-import { view, deserialize } from './app.js';
+import { writable } from 'svelte/store';
+import { deserialize } from './app.js';
 import { scene } from './server.js';
+
+export const view = writable({ id: 'scene' });
 
 let $view;
 view.subscribe((view) => {
@@ -12,9 +15,9 @@ const router = () => {
     fetching.abort();
     fetching = false;
   }
-  const [id] = location.hash.slice(2).split('/');
+  const [id, ...params] = location.hash.slice(2).split('/');
   if (id === 'gallery') {
-    view.set('gallery');
+    view.set({ id: 'gallery', filter: params[0] || 'latest' });
   } else if (id) {
     fetching = new AbortController();
     scene
@@ -22,7 +25,7 @@ const router = () => {
       .then((scene) => {
         fetching = false;
         deserialize(scene);
-        view.set('scene');
+        view.set({ id: 'scene' });
       })
       .catch((e) => {
         if (e.name !== 'AbortError') {
@@ -30,8 +33,8 @@ const router = () => {
           location.hash = '/';
         }
       });
-  } else if ($view === 'gallery') {
-    view.set('scene');
+  } else if ($view.id === 'gallery') {
+    view.set({ id: 'scene' });
   } 
 };
 

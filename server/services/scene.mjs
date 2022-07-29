@@ -1,6 +1,6 @@
 import { notFound } from '@hapi/boom';
 import { body, param } from 'express-validator';
-import { Scene, Screenshot } from '../models/index.mjs';
+import { Scene, Screenshot, User } from '../models/index.mjs';
 import { checkValidationResult } from './errorHandler.mjs';
 
 export const create = [
@@ -55,44 +55,55 @@ export const create = [
   },
 ];
 
-export const list = (filter) => ([
+export const list = [
+  param('filter')
+    .trim()
+    .not().isEmpty(),
   param('page')
     .isInt()
     .toInt(),
   checkValidationResult,
   (req, res, next) => {
-    const { page } = req.params;
+    const { filter, page } = req.params;
     const pageSize = 9;
-    const selector = {};
-    let sorting;
-    switch (filter) {
-      default:
-        sorting = '-createdAt';
-        break;
-    }
-    Scene
-      .countDocuments(selector)
-      .then((count) => (
+    (filter === 'latest' ? (
+      Promise.resolve(({ selector: {}, sorting: '-createdAt' }))
+    ) : (
+      User
+        .findOne({ name: filter })
+        .select('_id')
+        .then((user) => {
+          if (!user) {
+            throw notFound();
+          }
+          return { selector: { user: user._id }, sorting: '-updatedAt' };
+        })
+    ))
+      .then(({ selector, sorting }) => (
         Scene
-          .find(selector)
-          .sort(sorting)
-          .skip(page * pageSize)
-          .limit(pageSize)
-          .select('-_id author title slug')
-          .populate('author', '-_id name')
-          .lean()
-          .then((scenes) => (
-            res.json({
-              pages: Math.ceil(count / pageSize),
-              scenes: scenes.map(({ title, slug: id, author: { name: author } }) => ({
-                id, author, title
-              })),
-            })
+          .countDocuments(selector)
+          .then((count) => (
+            Scene
+              .find(selector)
+              .sort(sorting)
+              .skip(page * pageSize)
+              .limit(pageSize)
+              .select('-_id author title slug')
+              .populate('author', '-_id name')
+              .lean()
+              .then((scenes) => (
+                res.json({
+                  pages: Math.ceil(count / pageSize),
+                  scenes: scenes.map(({ title, slug: id, author: { name: author } }) => ({
+                    id, author, title
+                  })),
+                })
+              ))
           ))
       ))
       .catch(next);
   },
-]);
+];
 
 export const load = [
   param('slug')
@@ -232,7 +243,7 @@ export const update = [
         }
         if (req.body.screenshot) {
           return Screenshot
-            .updateOne({ scene: scene.id }, { $set: { buffer: Buffer.from(req.body.screenshot, 'base64') } })
+            .updateOne({ scene: scene._id }, { $set: { buffer: Buffer.from(req.body.screenshot, 'base64') } })
             .then(() => scene.slug);
         }
         return scene.slug;

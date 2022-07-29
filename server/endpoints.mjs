@@ -7,9 +7,9 @@ const preventCache = nocache();
 
 export default (api) => {
   api.get(
-    '/scenes/:page',
+    '/scenes/:filter/:page',
     preventCache,
-    scene.list('latest')
+    scene.list
   );
 
   api.post(
