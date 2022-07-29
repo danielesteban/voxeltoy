@@ -1,39 +1,10 @@
 <script>
-  import { view, rendering, deserialize } from './state/app.js';
-  import { scene } from './state/server.js';
+  import { rendering } from './state/app.js';
+  import { init } from './state/router.js';
   import App from './app.svelte';
   
   let hasError = false;
   let isLoading = true;
-
-  let controller = false;
-  const router = () => {
-    if (controller) {
-      controller.abort();
-      controller = false;
-    }
-    const [id] = location.hash.slice(2).split('/');
-    if (id === 'gallery') {
-      $view = 'gallery';
-    } else if (id) {
-      controller = new AbortController();
-      scene
-        .load(id, controller.signal)
-        .then((scene) => {
-          controller = false;
-          deserialize(scene);
-          view.set('scene');
-        })
-        .catch((e) => {
-          if (e.name !== 'AbortError') {
-            controller = false;
-            location.hash = '/';
-          }
-        });
-    } else if ($view === 'gallery') {
-      $view = 'scene';
-    } 
-  };
 
   Promise.all([
     (async () => {
@@ -51,8 +22,7 @@
   ])
     .then(([gpu]) => {
       rendering.gpu = gpu;
-      window.addEventListener('hashchange', router, false);
-      router();
+      init();
     })
     .catch((e) => {
       console.error(e);

@@ -1,5 +1,6 @@
 <script>
   import { meta, rendering, serialize } from '../state/app.js';
+  import { goTo } from '../state/router.js';
   import { baseURL, session, scene } from '../state/server.js';
   import Session from './session.svelte';
 
@@ -29,9 +30,9 @@
         ...serialize(),
         screenshot: getScreenshot(),
       })
-      .then((id) => {
-        location.hash = `/${id}`;
-      })
+      .then((id) => (
+        goTo(`/${id}`)
+      ))
       .catch(() => {});
   };
   const update = (e) => {
@@ -45,9 +46,9 @@
         ...serialize(),
         screenshot: getScreenshot(),
       })
-      .then(() => {
-        location.hash = '/gallery';
-      })
+      .then((id) => (
+        goTo(`/${id}`, true)
+      ))
       .catch(() => {});
   };
 </script>

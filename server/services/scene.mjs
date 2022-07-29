@@ -224,18 +224,20 @@ export const update = [
       update.scene = req.body.scene;
     }
     Scene
-      .findOneAndUpdate({ author: req.user._id, slug: req.params.slug }, { $set: update })
-      .select('_id')
+      .findOneAndUpdate({ author: req.user._id, slug: req.params.slug }, { $set: update }, { new: true })
+      .select('_id slug')
       .then((scene) => {
         if (!scene) {
           throw notFound();
         }
         if (req.body.screenshot) {
           return Screenshot
-            .updateOne({ scene: scene.id }, { $set: { buffer: Buffer.from(req.body.screenshot, 'base64') } });
+            .updateOne({ scene: scene.id }, { $set: { buffer: Buffer.from(req.body.screenshot, 'base64') } })
+            .then(() => scene.slug);
         }
+        return scene.slug;
       })
-      .then(() => res.status(200).end())
+      .then((slug) => res.json(slug))
       .catch(next);
   },
 ];

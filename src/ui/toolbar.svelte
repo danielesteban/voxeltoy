@@ -4,6 +4,7 @@
     deserialize,
     serialize
   } from '../state/app.js';
+  import { goTo } from '../state/router.js'; 
   import { session } from '../state/server.js'; 
   import Dropdown from './dropdown.svelte';
 
@@ -14,16 +15,16 @@
     { id: 'rendering', name: 'Rendering' },
   ];
 
+  const goToGallery = () => (
+    goTo('/gallery')
+  );
+
   const load = (scene) => {
     deserialize(scene);
     $view = 'scene';
     if (location.hash) {
-      location.hash = '/';
+      goTo('/');
     }
-  };
-
-  const goToGallery = () => {
-    location.hash = '/gallery';
   };
 
   const loadExample = (example) => () => (
