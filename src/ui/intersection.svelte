@@ -19,18 +19,25 @@
     observer.disconnect();
   });
 
-  let dom;
+  let wrapper;
   $: {
     if (enabled) {
-      observer.observe(dom);
+      observer.observe(wrapper);
     } else {
       observer.disconnect();
     }
   }
 </script>
 
-<div bind:this={dom}>
+<div class="wrapper" bind:this={wrapper}>
   {#if visible}
     <slot />
   {/if}
 </div>
+
+<style>
+  .wrapper {
+    width: 100%;
+    text-align: center;
+  }
+</style>
