@@ -14,7 +14,7 @@ export const meta = {
   hasModified: writable(false),
 };
 
-const sceneWritable = (value) => {
+const trackedWritable = (value) => {
   const { subscribe, set } = writable(value);
   return {
     subscribe,
@@ -27,22 +27,22 @@ const sceneWritable = (value) => {
 
 export const scene = {
   errors: writable([]),
-  source: sceneWritable(examples[0]),
+  source: trackedWritable(examples[0]),
 };
 export const atlas = {
   errors: writable([]),
-  source: sceneWritable(DefaultAtlas),
+  source: trackedWritable(DefaultAtlas),
 };
 export const rendering = {
-  background: sceneWritable('#000000'),
+  background: trackedWritable('#000000'),
   effects: {
     edges: {
-      color: sceneWritable('#000000'),
-      intensity: sceneWritable(0.3),
+      color: trackedWritable('#000000'),
+      intensity: trackedWritable(0.3),
     },
   },
   gpu: null,
-  resolution: sceneWritable(200),
+  resolution: trackedWritable(200),
 };
 
 export const deserialize = (data) => {
