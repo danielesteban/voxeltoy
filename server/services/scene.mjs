@@ -10,22 +10,19 @@ export const create = [
   body('atlas')
     .trim()
     .not().isEmpty(),
+  body('effect')
+    .trim()
+    .not().isEmpty(),
+  body('scene')
+    .trim()
+    .not().isEmpty(),
   body('background')
     .isInt()
     .toInt(),
-  body('edgesColor')
-    .isInt()
-    .toInt(),
-  body('edgesIntensity')
-    .isFloat()
-    .toFloat(),
   body('resolution')
     .isInt()
     .toInt()
     .isIn([100, 200, 300, 400]),
-  body('scene')
-    .trim()
-    .not().isEmpty(),
   body('screenshot')
     .isBase64(),
   checkValidationResult,
@@ -34,11 +31,10 @@ export const create = [
       author: req.user._id,
       title: req.body.title,
       atlas: req.body.atlas,
-      background: req.body.background,
-      edgesColor: req.body.edgesColor,
-      edgesIntensity: req.body.edgesIntensity,
-      resolution: req.body.resolution,
+      effect: req.body.effect,
       scene: req.body.scene,
+      background: req.body.background,
+      resolution: req.body.resolution,
     });
     const screenshot = new Screenshot({
       buffer: Buffer.from(req.body.screenshot, 'base64'),
@@ -186,27 +182,23 @@ export const update = [
     .optional()
     .trim()
     .not().isEmpty(),
+  body('effect')
+    .optional()
+    .trim()
+    .not().isEmpty(),
+  body('scene')
+    .optional()
+    .trim()
+    .not().isEmpty(),
   body('background')
     .optional()
     .isInt()
     .toInt(),
-  body('edgesColor')
-    .optional()
-    .isInt()
-    .toInt(),
-  body('edgesIntensity')
-    .optional()
-    .isFloat()
-    .toFloat(),
   body('resolution')
     .optional()
     .isInt()
     .toInt()
     .isIn([100, 200, 300]),
-  body('scene')
-    .optional()
-    .trim()
-    .not().isEmpty(),
   body('screenshot')
     .optional()
     .isBase64(),
@@ -219,20 +211,17 @@ export const update = [
     if (req.body.atlas) {
       update.atlas = req.body.atlas;
     }
-    if (req.body.background !== undefined) {
-      update.background = req.body.background;
-    }
-    if (req.body.edgesColor !== undefined) {
-      update.edgesColor = req.body.edgesColor;
-    }
-    if (req.body.edgesIntensity !== undefined) {
-      update.edgesIntensity = req.body.edgesIntensity;
-    }
-    if (req.body.resolution) {
-      update.resolution = req.body.resolution;
+    if (req.body.effect) {
+      update.effect = req.body.effect;
     }
     if (req.body.scene) {
       update.scene = req.body.scene;
+    }
+    if (req.body.background !== undefined) {
+      update.background = req.body.background;
+    }
+    if (req.body.resolution) {
+      update.resolution = req.body.resolution;
     }
     Scene
       .findOneAndUpdate({ author: req.user._id, slug: req.params.slug }, { $set: update }, { new: true })

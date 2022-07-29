@@ -2,6 +2,7 @@
   import { tick } from 'svelte';
   import { view } from './state/router.js';
   import Atlas from './ui/atlas.svelte';
+  import Effect from './ui/effect.svelte';
   import Gallery from './ui/gallery.svelte';
   import Publish from './ui/publish.svelte';
   import Rendering from './ui/rendering.svelte';
@@ -40,6 +41,8 @@
     <Toolbar />
     {#if $view.id === 'atlas'}
       <Atlas />
+    {:else if $view.id === 'effect'}
+      <Effect />
     {:else if $view.id === 'gallery'}
       <Gallery />
     {:else if $view.id === 'publish'}

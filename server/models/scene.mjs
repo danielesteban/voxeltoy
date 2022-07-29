@@ -6,24 +6,20 @@ const SceneSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  effect: {
+    type: String,
+    required: true,
+  },
+  scene: {
+    type: String,
+    required: true,
+  },
   background: {
-    type: Number,
-    required: true,
-  },
-  edgesColor: {
-    type: Number,
-    required: true,
-  },
-  edgesIntensity: {
     type: Number,
     required: true,
   },
   resolution: {
     type: Number,
-    required: true,
-  },
-  scene: {
-    type: String,
     required: true,
   },
   author: {

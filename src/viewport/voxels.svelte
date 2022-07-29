@@ -2,7 +2,7 @@
   import { vec3 } from 'gl-matrix';
   import { Renderer, Volume } from 'gpuvoxels';
   import { onMount } from 'svelte';
-  import { atlas, rendering, scene } from '../state/app.js';
+  import { atlas, effect, scene, rendering } from '../state/app.js';
   import Input from './input.js';
 
   const hex2Rgb = (hex) => [
@@ -63,8 +63,9 @@
         return;
       }
 
+      renderer.time.set(time);
       const command = renderer.device.createCommandEncoder();
-      volume.compute(command, time);
+      volume.compute(command);
       renderer.render(command, volume);
       renderer.device.queue.submit([command.finish()]);
     };
@@ -93,20 +94,9 @@
     };
 
     const subscriptions = [
-      atlas.source.subscribe((source) => {
-        source = '// __SOURCE__\n' + source;
-        renderer.atlas.compute(source);
-        processShaderErrors(renderer.atlas, atlas.errors);
-      }),
       rendering.background.subscribe((background) => (
         renderer.setClearColor(...hex2Rgb(background))
       )),
-      rendering.effects.edges.color.subscribe((color) => {
-        renderer.postprocessing.effects.edges.color = hex2Rgb(color);
-      }),
-      rendering.effects.edges.intensity.subscribe((intensity) => {
-        renderer.postprocessing.effects.edges.intensity = intensity;
-      }),
       rendering.resolution.subscribe((resolution) => {
         let source;
         if (volume) {
@@ -115,6 +105,7 @@
         }
         volume = new Volume({
           device: renderer.device,
+          time: renderer.time,
           width: resolution,
           height: resolution,
           depth: resolution,
@@ -127,6 +118,16 @@
           renderer.camera.target,
           volume.width * 0.5, volume.height * 0.5, volume.depth * 0.5
         );
+      }),
+      atlas.source.subscribe((source) => {
+        source = '// __SOURCE__\n' + source;
+        renderer.atlas.compute(source);
+        processShaderErrors(renderer.atlas, atlas.errors);
+      }),
+      effect.source.subscribe((source) => {
+        source = '// __SOURCE__\n' + source;
+        renderer.postprocessing.setEffect(source);
+        processShaderErrors(renderer.postprocessing, effect.errors);
       }),
       scene.source.subscribe((source) => {
         volume.source = source;

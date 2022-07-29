@@ -1,4 +1,4 @@
-fn distanceToScene(pos : vec3<f32>) -> f32 {
+fn distanceToScene(pos : vec3<f32>, time : f32) -> f32 {
   if (sdSphere(pos - volume.center, volume.size.x * 0.35) > 0.01) {
     return 1;
   }
@@ -22,8 +22,8 @@ fn distanceToScene(pos : vec3<f32>) -> f32 {
   );
 }
 
-fn getValueAt(pos : vec3<f32>) -> f32 {
-  if (distanceToScene(pos) > 0.01) {
+fn getValueAt(pos : vec3<f32>, time : f32) -> f32 {
+  if (distanceToScene(pos, time) > 0.01) {
     return 0;
   }
   return 1 + abs(simplexNoise3(floor(pos / 32))) * 254;

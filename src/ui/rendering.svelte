@@ -1,7 +1,7 @@
 <script>
   import { rendering } from '../state/app.js';
 
-  const { background, effects: { edges: { color, intensity } }, resolution } = rendering;
+  const { background, resolution } = rendering;
   const resolutions = [100, 200, 300, 400];
   const setResolution = (value) => () => {
     $resolution = value;
@@ -23,38 +23,9 @@
       {/each}
     </div>
   </div>
-  <h4>Effects</h4>
-  <h5>Edges</h5>
-  <div class="input">
-    <label for="edgesColor">Color:</label>
-    <input id="edgesColor" type="color" bind:value={$color} />
-  </div>
-  <div class="input">
-    <label for="edgesIntensity">Intensity:</label>
-    <input
-      id="edgesIntensity"
-      type="number"
-      min={0}
-      max={1}
-      step={0.01}
-      bind:value={$intensity}
-    />
-  </div>
 </div>
 
 <style>
-  h4 {
-    background-color: #000;
-    padding: 0.5rem 1rem;
-    margin: 1rem 0 0;
-  }
-
-  h5 {
-    background-color: #111;
-    padding: 0.5rem 1rem;
-    margin: 0 0 1rem;
-  }
-
   .wrapper {
     background-color: #1e1e1e;
     padding: 1rem 0;
@@ -79,10 +50,6 @@
     outline: 0;
     border-radius: 0.25rem;
     font-family: inherit;
-  }
-
-  .input > input[type="number"] {
-    padding: 0.5rem;
   }
 
   .resolution {

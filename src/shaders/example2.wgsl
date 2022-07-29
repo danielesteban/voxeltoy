@@ -1,4 +1,4 @@
-fn distanceToScene(pos : vec3<f32>) -> f32 {
+fn distanceToScene(pos : vec3<f32>, time : f32) -> f32 {
   var origin : vec3<f32> = pos - volume.center;
   var r : mat3x3<f32> = rotateX(PI * -0.5);
   return opUnion(
@@ -13,8 +13,8 @@ fn distanceToScene(pos : vec3<f32>) -> f32 {
   );
 }
 
-fn getValueAt(pos : vec3<f32>) -> f32 {
-  if (distanceToScene(pos) > 0.01) {
+fn getValueAt(pos : vec3<f32>, time : f32) -> f32 {
+  if (distanceToScene(pos, time) > 0.01) {
     return 0;
   }
   return 1 + abs(simplexNoise3(pos * 0.01)) * 254;

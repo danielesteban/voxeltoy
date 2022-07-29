@@ -12,6 +12,7 @@
   const views = [
     { id: 'scene', name: 'Scene' },
     { id: 'atlas', name: 'Atlas' },
+    { id: 'effect', name: 'Effect' },
     { id: 'rendering', name: 'Rendering' },
   ];
 
