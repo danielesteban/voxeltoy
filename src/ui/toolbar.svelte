@@ -84,8 +84,11 @@
   {:else}
     <div class="menu">
       <!-- svelte-ignore a11y-missing-attribute -->
-      <a on:click={goToGallery()}>Voxeltoy</a>
-      &gt; {$title} by
+      <span class="parent">
+        <a on:click={goToGallery()}>Voxeltoy</a>
+        &gt;
+      </span>
+      {$title} by
       {#if $author || $session}
         <!-- svelte-ignore a11y-missing-attribute -->
         <a on:click={goToGallery($author || $session.name)}>
@@ -170,10 +173,18 @@
     white-space: nowrap;
   }
 
-  .menu > a {
+  .menu > a, .menu .parent > a {
     font-weight: 700;
     text-decoration: underline;
     cursor: pointer;
+  }
+
+  .menu > a:hover, .menu .parent > a:hover {
+    color: #393;
+  }
+
+  .menu .parent {
+    color: #666;
   }
 
   .toolbar {

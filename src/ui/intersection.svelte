@@ -2,15 +2,20 @@
   import { createEventDispatcher, onDestroy } from 'svelte';
 
   export let enabled = true;
+  let visible = false;
 
+  const delay = setTimeout(() => {
+    visible = true;
+  }, 100);
 	const dispatch = createEventDispatcher();
   const observer = new IntersectionObserver(([{ isIntersecting }]) => {
     if (isIntersecting) {
       dispatch('intersect');
     }
   });
-
+  
   onDestroy(() => {
+    clearTimeout(delay);
     observer.disconnect();
   });
 
@@ -25,5 +30,7 @@
 </script>
 
 <div bind:this={dom}>
-  <slot />
+  {#if visible}
+    <slot />
+  {/if}
 </div>
