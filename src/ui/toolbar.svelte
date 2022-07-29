@@ -17,7 +17,7 @@
   ];
 
   const goToGallery = (filter = '') => () => (
-    goTo(`/gallery/${filter}`)
+    goTo(`/gallery${filter ? `/${filter}` : ''}`)
   );
 
   const load = (scene) => {
