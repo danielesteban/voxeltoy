@@ -2,8 +2,18 @@
 
 // Textures
 // var colorTexture : texture_2d<f32>;
+// R G B
+
 // var normalTexture : texture_2d<f32>;
+// X Y Z
+
 // var positionTexture : texture_2d<f32>;
+// X Y Z : world position
+// W : view depth
+
+// Constants
+// camera.position : vec3<f32>
+// camera.direction : vec3<f32>
 
 struct Effect {
   color : vec3<f32>,
@@ -22,11 +32,11 @@ const effect : Effect = Effect(
 const offset : vec3<i32> = vec3<i32>(1, 1, 0);
 
 fn edgesDepth(pixel : vec2<i32>) -> f32 {
-  var pixelCenter : f32 = textureLoad(positionTexture, pixel, 0).z;
-  var pixelLeft : f32 = textureLoad(positionTexture, pixel - offset.xz, 0).z;
-  var pixelRight : f32 = textureLoad(positionTexture, pixel + offset.xz, 0).z;
-  var pixelUp : f32 = textureLoad(positionTexture, pixel + offset.zy, 0).z;
-  var pixelDown : f32 = textureLoad(positionTexture, pixel - offset.zy, 0).z;
+  var pixelCenter : f32 = textureLoad(positionTexture, pixel, 0).w;
+  var pixelLeft : f32 = textureLoad(positionTexture, pixel - offset.xz, 0).w;
+  var pixelRight : f32 = textureLoad(positionTexture, pixel + offset.xz, 0).w;
+  var pixelUp : f32 = textureLoad(positionTexture, pixel + offset.zy, 0).w;
+  var pixelDown : f32 = textureLoad(positionTexture, pixel - offset.zy, 0).w;
   return (
     abs(pixelLeft    - pixelCenter) 
     + abs(pixelRight - pixelCenter) 
@@ -50,7 +60,7 @@ fn edgesNormal(pixel : vec2<i32>) -> f32 {
   return (edge.x + edge.y + edge.z) * effect.normalScale;
 }
 
-fn getColor(pixel : vec2<i32>, size : vec2<i32>, time : f32) -> vec4<f32> {
+fn getColor(pixel : vec2<i32>, size : vec2<i32>, camera : Camera, time : f32) -> vec4<f32> {
   var color : vec3<f32> = textureLoad(colorTexture, pixel, 0).xyz;
   color = mix(color, effect.color, clamp(max(edgesDepth(pixel), edgesNormal(pixel)), 0, 1) * effect.intensity);
   return vec4<f32>(color, 1);
