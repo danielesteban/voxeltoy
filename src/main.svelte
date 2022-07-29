@@ -22,7 +22,7 @@
   ])
     .then(([gpu]) => {
       rendering.gpu = gpu;
-      init();
+      return init();
     })
     .catch((e) => {
       console.error(e);

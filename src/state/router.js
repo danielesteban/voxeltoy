@@ -15,13 +15,15 @@ const router = () => {
     fetching.abort();
     fetching = false;
   }
-  const [id, ...params] = location.hash.slice(2).split('/');
-  if (id === 'gallery') {
+  const [route, ...params] = location.hash.slice(2).split('/');
+  if (route === 'gallery') {
     view.set({ id: 'gallery', filter: params[0] || 'latest' });
-  } else if (id) {
+    return;
+  }
+  if (route) {
     fetching = new AbortController();
-    scene
-      .load(id, fetching.signal)
+    return scene
+      .load(route, fetching.signal)
       .then((scene) => {
         fetching = false;
         deserialize(scene);
@@ -33,14 +35,15 @@ const router = () => {
           location.hash = '/';
         }
       });
-  } else if ($view.id === 'gallery') {
+  }
+  if ($view.id === 'gallery') {
     view.set({ id: 'scene' });
   } 
 };
 
 export const init = () => {
   window.addEventListener('hashchange', router, false);
-  router();
+  return router();
 };
 
 export const goTo = (path, force = false) => {
