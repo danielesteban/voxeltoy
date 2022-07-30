@@ -2,7 +2,7 @@
 
 // SDF primitives
 // sdBox(p : vec3<f32>, r : vec3<f32>) -> f32
-// sdCapsule(p : vec3<f32>, r : vec3<f32>) -> f32
+// sdCapsule(p : vec3<f32>, r : vec2<f32>) -> f32
 // sdEllipsoid(p : vec3<f32>, r : vec3<f32>) -> f32
 // sdSphere(p : vec3<f32>, r : f32) -> f32
 // sdTorus(p : vec3<f32>, r : vec2<f32>) -> f32
