@@ -105,6 +105,7 @@
   }
 
   .wrapper {
+    min-width: 0;
     min-height: 0;
   }
 
