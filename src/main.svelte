@@ -13,6 +13,15 @@
       }
       const adapter = await navigator.gpu.requestAdapter();
       const device = await adapter.requestDevice();
+      {
+        const module = device.createShaderModule({
+          code: `const checkConstSupport : f32 = 1;`,
+        });
+        const { messages } = await module.compilationInfo();
+        if (messages.find(({ type }) => type === 'error')) {
+          throw new Error('ConstSupport');
+        }
+      }
       return { adapter, device };
     })(),
     new Promise((resolve) => {
